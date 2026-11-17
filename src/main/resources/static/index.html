@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livraria Tríade de Papel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ========================================== -->
+<!-- CABEÇALHO GLOBAL ÚNICO E FIXO              -->
+<!-- ========================================== -->
+<header class="site-header">
+    <div class="logo-area" onclick="voltarParaLoja(event)" style="cursor: pointer;">
+        <img src="img/titulo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+        <div class="logo-text">
+            Livraria
+            <span>Tríade de Papel</span>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO DINÂMICA POR MODO -->
+    <nav class="nav-menu">
+        <!-- Menu: Loja / Vitrine -->
+        <div id="nav-mode-loja" class="nav-subgrupo">
+            <a href="#" onclick="voltarParaLoja(event)" class="ativo">Início</a>
+            <a href="#acervo-seccao">Acervo</a>
+            <a href="#" onclick="abrirModalSobre(event)">Sobre Nós</a>
+        </div>
+
+        <!-- Menu: Painel Administrativo -->
+        <div id="nav-mode-admin" class="nav-subgrupo oculto">
+            <a href="#" id="nav-livros" class="ativo" onclick="mostrarAba('livros', event)">Acervo</a>
+            <a href="#" id="nav-faturas" onclick="mostrarAba('faturas', event)">Faturas</a>
+            <a href="#" id="nav-relatorios" onclick="mostrarAba('relatorios', event)">Relatórios & Métricas</a>
+            <a href="#" id="nav-funcionario" onclick="mostrarAba('funcionario', event)">Registar Funcionário</a>
+        </div>
+
+        <!-- Menu: Área do Cliente -->
+        <div id="nav-mode-cliente" class="nav-subgrupo oculto">
+            <a href="#" onclick="voltarParaLoja(event)" class="ativo">Voltar à Loja</a>
+        </div>
+    </nav>
+
+    <!-- AÇÕES DO TOPO / BOTÕES / CARRINHO -->
+    <div class="acoes-topo">
+        <div class="input-busca-topo-container" id="busca-topo-loja">
+            <input type="text" id="input-busca-loja" placeholder="Pesquisar livro..." oninput="filtrarLivrosLoja()">
+        </div>
+
+        <!-- MENU DESLOGADO -->
+        <div id="menu-deslogado" class="menu-auth-wrapper">
+            <button class="btn-login-topo" onclick="abrirTelaEscolhaLogin()">Fazer Login</button>
+            <button class="btn-conta-topo" onclick="abrirModalCadastroCliente()">Criar Conta</button>
+        </div>
+
+        <!-- MENU CLIENTE LOGADO -->
+        <div id="menu-cliente-logado" class="menu-auth-wrapper oculto">
+            <span class="usuario-logado-texto" id="nome-cliente-topo">Olá, Utilizador</span>
+            <button class="btn-login-topo" onclick="abrirModalPerfil()">Perfil</button>
+            <button class="btn-login-topo" onclick="abrirMinhasCompras()">Minhas Compras</button>
+            <button class="btn-conta-topo btn-sair-perfil" onclick="logoutGeral()">Sair</button>
+        </div>
+
+        <!-- MENU VENDEDOR LOGADO -->
+        <div id="menu-vendedor-logado" class="menu-auth-wrapper oculto">
+            <span class="usuario-logado-texto" id="nome-vendedor-topo">Vendedor</span>
+            <button class="btn-login-topo" onclick="abrirModalPerfilVendedor()">Perfil</button>
+            <button class="btn-login-topo" onclick="abrirVendasRealizadas()">Vendas Realizadas</button>
+            <button class="btn-conta-topo btn-sair-perfil" onclick="logoutGeral()">Sair</button>
+        </div>
+
+        <!-- MENU ADMIN LOGADO -->
+        <div id="menu-admin-logado" class="menu-auth-wrapper oculto">
+            <span class="usuario-logado-texto" id="nome-admin-topo">👤 Administrador</span>
+            <button class="btn-conta-topo btn-sair-perfil" onclick="realizarLogout()">Sair</button>
+        </div>
+
+        <!-- BOTÃO CARRINHO -->
+        <button class="btn-icone-carrinho" id="cart-icon" onclick="toggleCarrinho()">
+            🛒 Carrinho <span class="carrinho-badge" id="contador-carrinho">0</span>
+        </button>
+    </div>
+</header>
+
+<!-- ========================================== -->
+<!-- SISTEMA DA LOJA (VITRINE)                  -->
+<!-- ========================================== -->
+<div id="loja-sistema">
+    <!-- HERO BANNER -->
+    <section class="hero-banner">
+        <h1>Livraria Tríade de Papel</h1>
+        <p>Explore as nossas edições clássicas e contemporâneas disponíveis no acervo literário e digital.</p>
+        <div class="hero-botoes">
+            <button class="btn-hero-primary" onclick="document.getElementById('acervo-seccao').scrollIntoView({behavior: 'smooth'})">Explorar Acervo</button>
+            <button class="btn-hero-secondary" onclick="abrirTelaEscolhaLogin()">Portal de Acesso</button>
+        </div>
+    </section>
+
+    <!-- SECÇÃO PILARES E FILTROS -->
+    <section class="seccao-pilares" id="acervo-seccao">
+        <div class="pilares-titulo">
+            <span class="subtitulo-destaque">Destaques</span>
+            <h2>Acervo Literário Completo</h2>
+        </div>
+        <div class="pilares-badges">
+            <button class="btn-filtro-badge" onclick="abrirModalTematicas()">Temáticas</button>
+            <button class="btn-filtro-badge" onclick="filtrarLancamentos()">Lançamentos</button>
+            <button class="btn-filtro-badge" onclick="filtrarPromocoes()">Promoções</button>
+            <button class="btn-filtro-badge btn-limpar-filtro" onclick="carregarVitrine()">Ver Todos</button>
+        </div>
+    </section>
+
+    <!-- VITRINE DE LIVROS -->
+    <main class="main-vitrine">
+        <div class="vitrine-titulo">
+            <h2>Catálogo Disponível</h2>
+            <p>Explore as nossas edições clássicas e contemporâneas disponíveis.</p>
+        </div>
+        <div class="vitrine-grid" id="vitrine-livros">
+            <!-- Livros injetados dinamicamente via JS -->
+        </div>
+    </main>
+
+    <!-- DRAWER / PAINEL DO CARRINHO -->
+    <div id="carrinho-lateral" class="carrinho-drawer oculto">
+        <div class="carrinho-header">
+            <h3>O seu Carrinho</h3>
+            <button class="btn-fechar-drawer close-cart" onclick="toggleCarrinho()">✕</button>
+        </div>
+        <div class="carrinho-corpo">
+            <div id="itens-carrinho">
+                <!-- Itens do carrinho -->
+            </div>
+        </div>
+        <div class="carrinho-footer">
+            <div id="area-cliente-balcao" class="area-balcao oculto">
+                <label class="form-label-small">CPF do Cliente (Atendimento):</label>
+                <input type="text" id="checkout-cliente-cpf" class="input-padrao-small" placeholder="Insira o CPF do cliente">
+            </div>
+
+            <div class="bloco-pagamento-margem">
+                <label class="form-label-small">Forma de Pagamento:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="pagamento" value="CARTAO" checked onchange="alternarPagamento()"> Cartão</label>
+                    <label><input type="radio" name="pagamento" value="PIX" onchange="alternarPagamento()"> PIX</label>
+                </div>
+            </div>
+
+            <div id="area-cartao" class="bloco-pagamento-margem">
+                <input type="text" id="checkout-cartao" class="input-padrao-small" placeholder="Número do Cartão de Crédito">
+            </div>
+
+            <div id="area-pix" class="pix-aviso oculto">
+                O QR Code e a chave PIX serão gerados na fatura de confirmação.
+            </div>
+
+            <div class="carrinho-total">
+                <span>Total:</span>
+                <span id="total-carrinho">R$ 0,00</span>
+            </div>
+            <button id="btn-finalizar" class="btn-fechar-fatura" onclick="abrirCheckoutDetalhado()">Continuar Compra</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- PAINEL ADMINISTRATIVO                      -->
+<!-- ========================================== -->
+<div id="app-sistema" class="admin-container oculto">
+    <div class="admin-conteudo-largura admin-margem-topo">
+
+        <!-- ABA 1: GESTÃO DO ACERVO LITERÁRIO -->
+        <div id="livros" class="aba-conteudo active admin-flex-livros">
+            <div class="card-painel card-formulario">
+                <h3 class="admin-card-titulo">Adicionar Novo Livro ao Acervo</h3>
+                <form id="form-cad-livro" onsubmit="cadastrarLivroAdmin(event)">
+                    <div class="form-group"><label>Título do Livro</label><input type="text" id="livro-titulo" required placeholder="Ex: Dom Casmurro"></div>
+                    <div class="form-group"><label>Autor</label><input type="text" id="livro-autor" required placeholder="Ex: Machado de Assis"></div>
+                    <div class="form-group"><label>Preço (R$)</label><input type="number" step="0.01" id="livro-preco" required placeholder="49.90"></div>
+                    <div class="form-group"><label>Qtd. Estoque</label><input type="number" id="livro-estoque" required placeholder="20"></div>
+                    <div class="form-group"><label>Temática</label><input type="text" id="livro-tematica" required placeholder="Literatura Clássica"></div>
+                    <div class="form-group"><label>URL da Imagem / Capa</label><input type="text" id="livro-imagem" placeholder="img/capa.png"></div>
+                    <button type="submit" class="btn-primario btn-espacamento-superior">Registrar Livro</button>
+                </form>
+            </div>
+
+            <div class="card-painel card-catalogo lista-acervo">
+                <h3 class="admin-card-titulo">Catálogo Atual no Sistema</h3>
+                <div class="scroll-area" id="lista-acervo-admin">
+                    <!-- Lista carregada via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 2: PESQUISA DE FATURAS -->
+        <div id="faturas" class="aba-conteudo oculto">
+            <div class="card-painel card-full-width">
+                <h3 class="admin-card-titulo">Pesquisa de Faturas e Vendas</h3>
+                <p class="admin-sub-texto">Consulte o histórico completo de vendas efetuadas por clientes ou funcionários no balcão.</p>
+                <div class="search-bar">
+                    <input type="text" id="filtro-termo" placeholder="Pesquisar por título do livro ou cliente...">
+                    <button class="btn-primario btn-pesquisar-fatura" onclick="pesquisarFaturas()">Pesquisar</button>
+                </div>
+                <div class="terminal-box light" id="resultado-faturas">
+                    === RESULTADOS ===
+                    Insira um termo ou clique em pesquisar para carregar as faturas.
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 3: RELATÓRIOS & MÉTRICAS -->
+        <div id="relatorios" class="aba-conteudo oculto">
+            <div class="metrics-grid">
+                <div class="metric-card"><span>FATURAÇÃO TOTAL</span><h4 id="card-faturamento">R$ 0,00</h4></div>
+                <div class="metric-card"><span>TOTAL DE VENDAS</span><h4 id="card-total-vendas">0</h4></div>
+                <div class="metric-card"><span>MAIS VENDIDO</span><h4 id="card-produto-topo">-</h4></div>
+                <div class="metric-card"><span>MELHOR CLIENTE</span><h4 id="card-melhor-cliente">-</h4></div>
+            </div>
+            <div class="card-painel card-full-width">
+                <h3 class="admin-card-titulo">Relatório Consolidado e Alertas de Stock</h3>
+                <div class="terminal-box dark" id="texto-relatorio">
+                    A carregar métricas do sistema...
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 4: REGISTAR FUNCIONÁRIO -->
+        <div id="funcionario" class="aba-conteudo oculto">
+            <div class="card-painel card-centralizado-medio">
+                <h3 class="admin-card-titulo">Registrar Novo Funcionário (Vendedor)</h3>
+                <p class="admin-sub-texto">Preencha os dados alinhados ao minimundo de herança da classe <code>Pessoa</code> &rarr; <code>Vendedor</code>.</p>
+                <form id="form-cad-vendedor" onsubmit="realizarCadastroVendedor(event)">
+                    <div class="form-group"><label>CPF (Chave Primária / Pessoa)</label><input type="text" id="vend-cpf" required placeholder="000.000.000-00"></div>
+                    <div class="form-group"><label>Nome Completo</label><input type="text" id="vend-nome" required placeholder="Nome do funcionário"></div>
+                    <div class="form-group"><label>Matrícula</label><input type="text" id="vend-matricula" required placeholder="Ex: VEND003"></div>
+                    <div class="form-group"><label>E-mail</label><input type="email" id="vend-email" required placeholder="vendedor@triadepapel.com"></div>
+                    <div class="form-group"><label>Data de Entrada</label><input type="date" id="vend-data" required></div>
+                    <div class="form-group"><label>Tempo de Serviço (anos)</label><input type="number" id="vend-tempo" required value="1"></div>
+                    <div class="form-group"><label>Salário (R$)</label><input type="number" step="0.01" id="vend-salario" required placeholder="1800.00"></div>
+                    <div class="form-group"><label>Telefone</label><input type="text" id="vend-telefone" value="(99) 99999-9999"></div>
+                    <button type="submit" class="btn-primario btn-espacamento-superior">Registrar Funcionário</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- APP CLIENTE (MINHAS COMPRAS)               -->
+<!-- ========================================== -->
+<div id="app-cliente" class="admin-container oculto">
+    <div class="admin-conteudo-largura admin-margem-topo">
+        <h3 class="admin-card-titulo">O Meu Histórico de Compras</h3>
+        <div id="lista-faturas-cliente">
+            <!-- Histórico injetado via JS -->
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- SECÇÃO DE VENDAS DO VENDEDOR (CORRIGIDA)   -->
+<!-- ========================================== -->
+<div id="app-vendedor-vendas" class="admin-container oculto" style="padding: 2rem;">
+    <div class="admin-conteudo-largura">
+        <h3 class="admin-card-titulo">Histórico de Vendas Realizadas</h3>
+        <p class="admin-sub-texto">Consulte todas as edições comercializadas no balcão pelo vendedor logado.</p>
+        <button class="btn-secundario" onclick="voltarParaLoja(event)" style="width: auto; margin-bottom: 15px;">Voltar à Loja</button>
+        <div id="lista-vendas-vendedor" class="card-painel" style="padding: 1.5rem;">
+            <!-- Os dados injetados via JS aparecem aqui -->
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAIS E TELA DE LOGIN                     -->
+<!-- ========================================== -->
+<div id="tela-escolha-login" class="modal-overlay oculto">
+    <div class="modal-box modal-acesso-box">
+        <h3 class="modal-titulo-destaque">Portal de Acesso</h3>
+        <p class="modal-subtitulo">Selecione como deseja aceder à plataforma:</p>
+
+        <div class="acoes-perfil-coluna">
+            <button class="btn-primario" onclick="escolherPerfil('loja')">Entrar na Loja (Vitrine)</button>
+            <button class="btn-primario" onclick="escolherPerfil('cliente')">Área do Cliente (Entrar)</button>
+            <button class="btn-primario btn-vendedor-cor" onclick="escolherPerfil('vendedor')">Área do Vendedor (Funcionário)</button>
+            <button class="btn-secundario btn-admin-cor" onclick="escolherPerfil('admin')">Painel Administrativo</button>
+        </div>
+
+        <button class="btn-cancelar btn-margem-topo" onclick="fecharTelaEscolhaLogin()">Cancelar</button>
+    </div>
+</div>
+
+<div id="cliente-login-screen" class="login-wrapper oculto">
+    <div class="login-box">
+        <h3 class="modal-titulo-destaque">Área do Cliente</h3>
+        <p class="modal-subtitulo">Insira o seu CPF para aceder à sua conta e histórico de compras.</p>
+        <div class="form-group">
+            <label for="login-cliente-doc">CPF ou Documento</label>
+            <input type="text" id="login-cliente-doc" placeholder="Ex: 12345678900">
+        </div>
+        <button type="button" class="btn-primario" onclick="entrarAreaCliente()">Entrar</button>
+        <button type="button" class="btn-cancelar" onclick="voltarParaLoja(event)">Voltar à Loja</button>
+    </div>
+</div>
+
+<div id="vendedor-login-screen" class="login-wrapper oculto">
+    <div class="login-box">
+        <h3 class="modal-titulo-destaque">Portal do Vendedor</h3>
+        <p class="modal-subtitulo">Insira a sua matrícula ou CPF para iniciar o atendimento.</p>
+        <form id="form-login-vendedor" onsubmit="realizarLoginVendedor(event)">
+            <div class="form-group">
+                <label for="vendedor-doc">CPF ou Matrícula</label>
+                <input type="text" id="vendedor-doc" required placeholder="Ex: VEND001 ou CPF">
+            </div>
+            <button type="submit" class="btn-primario">Entrar como Vendedor</button>
+            <button type="button" class="btn-cancelar" onclick="voltarParaLoja(event)">Voltar à Loja</button>
+        </form>
+    </div>
+</div>
+
+<div id="login-screen" class="login-wrapper oculto">
+    <div class="login-box">
+        <h3 class="modal-titulo-destaque">Painel Administrativo</h3>
+        <form id="form-login" onsubmit="realizarLogin(event)">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" required placeholder="nome@livraria.com">
+            </div>
+            <div class="form-group">
+                <label for="senha">Palavra-passe</label>
+                <input type="password" id="senha" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-primario">Entrar no Sistema</button>
+            <button type="button" class="btn-cancelar" onclick="voltarParaLoja(event)">Voltar à Loja</button>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL SOBRE NÓS                            -->
+<!-- ========================================== -->
+<div id="modal-sobre" class="modal-overlay oculto" role="dialog" aria-modal="true" aria-labelledby="titulo-sobre">
+    <div class="modal-box sobre-modal-box">
+        <div class="sobre-header">
+            <h3 id="titulo-sobre">Sobre a Livraria Tríade de Papel</h3>
+            <button class="btn-fechar-drawer btn-fechar-escuro" onclick="fecharModalSobre()" aria-label="Fechar modal">✕</button>
+        </div>
+        <div class="sobre-conteudo">
+            <p>A Livraria Tríade de Papel é um projeto acadêmico e comercial dedicado à valorização da literatura clássica e contemporânea, unindo tecnologia web moderna e gestão eficiente de acervo.</p>
+            <span class="texto-cursivo-destaque">"A leitura abre portas para novos mundos."</span>
+
+            <!-- Equipa de Desenvolvimento -->
+            <div class="equipe-grid" style="margin-top: 1.2rem;">
+                <div class="membro-card">
+                    <div class="membro-info">
+                        <span class="membro-nome">Edilka Vanessa Menezes Taurino</span>
+                        <a href="https://github.com/nessataurino-design" target="_blank" class="membro-github" rel="noopener noreferrer">GitHub ↗</a>
+                    </div>
+                </div>
+                <div class="membro-card">
+                    <div class="membro-info">
+                        <span class="membro-nome">Edivoneide Ferreira Silva de Araújo</span>
+                        <a href="https://github.com/EdivoneAraujo" target="_blank" class="membro-github" rel="noopener noreferrer">GitHub ↗</a>
+                    </div>
+                </div>
+                <div class="membro-card">
+                    <div class="membro-info">
+                        <span class="membro-nome">Vinícius Cavalcanti Santos</span>
+                        <a href="https://github.com/ViniciusCavalcantiSantos" target="_blank" class="membro-github" rel="noopener noreferrer">GitHub ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-tematicas" class="modal-overlay oculto">
+    <div class="modal-box modal-tematica-box">
+        <h3>Filtrar por Temática</h3>
+        <div id="lista-tematicas-botoes" class="lista-botoes-tematica">
+            <!-- Botões injetados via JS -->
+        </div>
+        <button class="btn-cancelar" onclick="fecharModalTematicas()">Fechar</button>
+    </div>
+</div>
+
+<div id="modal-cadastro-cliente" class="modal-overlay oculto">
+    <div class="modal-box modal-cadastro-box">
+        <h3>Criar Conta de Cliente</h3>
+        <form id="form-cad-cliente" onsubmit="realizarCadastroCliente(event)">
+            <div class="form-group"><label>Nome Completo</label><input type="text" id="cad-nome" required></div>
+            <div class="form-group"><label>CPF / Documento</label><input type="text" id="cad-cpf" required></div>
+            <div class="form-group"><label>Telefone</label><input type="text" id="cad-telefone" required></div>
+            <div class="form-group"><label>E-mail</label><input type="email" id="cad-email" required></div>
+            <div class="form-group"><label>Sexo</label><select id="cad-sexo"><option value="M">Masculino</option><option value="F">Feminino</option><option value="Outro">Outro</option></select></div>
+            <div class="form-group"><label>Estado (UF)</label><input type="text" id="cad-uf" value="PE" maxlength="2" required></div>
+            <button type="submit" class="btn-primario">Registrar Conta</button>
+            <button type="button" class="btn-cancelar" onclick="fecharModalCadastroCliente()">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+<div id="modal-perfil" class="modal-overlay oculto">
+    <div class="modal-box modal-perfil-box">
+        <h3>Perfil do Cliente</h3>
+        <div id="perfil-detalhes" class="perfil-detalhes-conteudo">
+            <!-- Dados do perfil -->
+        </div>
+        <button class="btn-cancelar" onclick="fecharModalPerfil()">Fechar</button>
+    </div>
+</div>
+
+<div id="modal-fatura" class="modal-overlay oculto">
+    <div class="modal-box modal-fatura-box">
+        <h3 class="fatura-sucesso-titulo">Compra Concluída com Sucesso! 🎉</h3>
+        <div id="fatura-body">
+            <!-- Fatura detalhada -->
+        </div>
+        <button class="btn-primario" onclick="fecharFatura()">Fechar e Voltar à Loja</button>
+    </div>
+</div>
+<!-- ========================================== -->
+<!-- MODAL DE CHECKOUT DETALHADO (ETAPA 2)      -->
+<!-- ========================================== -->
+<div id="modal-checkout-detalhado" class="modal-overlay oculto">
+    <div class="modal-box checkout-modal-box">
+        <div class="checkout-modal-header">
+            <h3 class="checkout-modal-titulo">Finalização do Pedido</h3>
+            <button type="button" class="btn-fechar-checkout" onclick="fecharCheckoutDetalhado()">✕</button>
+        </div>
+
+        <form id="form-checkout-final" onsubmit="confirmarCompraFinal(event)">
+            <div id="bloco-info-vendedor" class="form-group checkout-vendedor-box oculto">
+                <label class="checkout-vendedor-label">Vendedor Responsável:</label>
+                <span id="checkout-vendedor-exibicao" class="checkout-vendedor-texto"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="checkout-final-cpf">CPF do Cliente *</label>
+                <input type="text" id="checkout-final-cpf" required placeholder="000.000.000-00">
+            </div>
+
+            <div class="form-group">
+                <label for="checkout-final-nome">Nome Completo do Cliente *</label>
+                <input type="text" id="checkout-final-nome" required placeholder="Digite o nome completo">
+            </div>
+
+            <div class="form-group">
+                <label for="checkout-final-endereco">Endereço de Entrega / Faturação *</label>
+                <input type="text" id="checkout-final-endereco" required placeholder="Rua, Número, Bairro, Cidade - UF">
+            </div>
+
+            <div class="checkout-total-resumo">
+                <strong>Total a Pagar:</strong>
+                <span id="checkout-final-total" class="checkout-total-valor">R$ 0,00</span>
+            </div>
+
+            <div class="checkout-modal-acoes">
+                <button type="button" onclick="fecharCheckoutDetalhado()" class="btn-secundario btn-voltar-checkout">Voltar</button>
+                <button type="submit" id="btn-confirmar-definitivo" class="btn-primario">Confirmar Compra</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

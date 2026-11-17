@@ -1,0 +1,1239 @@
+/* ========================================================== */
+/* 1. IMPORTAÇÃO DE FONTES EXTERNAS                           */
+/* ========================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ========================================================== */
+/* 2. VARIÁVEIS GLOBAIS (ROOT)                                */
+/* ========================================================== */
+:root {
+    --cor-primaria: #2c2825;
+    --cor-destaque: #8c6239;
+    --cor-fundo: #fdfbf7;
+    --cor-borda: #e5ded0;
+    --sombra-suave: 0 0.2rem 0.8rem rgba(0,0,0,0.06);
+}
+
+/* ========================================================== */
+/* 3. CONFIGURAÇÃO BASE DA PÁGINA (BODY)                      */
+/* ========================================================== */
+body {
+    background-color: var(--cor-fundo);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-top: 50px;
+    color: var(--cor-primaria);
+    font-size: 0.85rem;
+    overflow-x: hidden;
+    transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: margin-right;
+}
+
+body.cart-open {
+    overflow-x: hidden;
+    margin-right: 290px;
+}
+
+h2, h3, .logo-text, .vitrine-titulo h2 {
+    font-family: 'Playfair Display', serif;
+}
+
+.oculto {
+    display: none !important;
+}
+
+/* ========================================== */
+/* 4. CABEÇALHO FIXO (HEADER)                 */
+/* ========================================== */
+header.site-header,
+.admin-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    background-color: var(--cor-fundo);
+    border-bottom: 0.1rem solid var(--cor-borda);
+    padding: 0.3rem 1.5%;
+    min-height: 50px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1800;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.logo-img {
+    width: 2.6rem;
+    height: auto;
+    object-fit: contain;
+    border-radius: 6%;
+}
+
+.logo-text {
+    font-size: 0.85rem;
+    font-weight: 700 !important;
+    color: var(--cor-primaria);
+    line-height: 1.1;
+}
+
+.logo-text span {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.15rem;
+    color: var(--cor-destaque);
+    display: block;
+}
+
+nav.menu-principal {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-menu,
+.nav-subgrupo {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.nav-menu a,
+nav.menu-principal a {
+    text-decoration: none;
+    color: #4a4542;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-menu a:hover,
+.nav-menu a.ativo,
+nav.menu-principal a:hover {
+    color: var(--cor-destaque);
+}
+
+.acoes-topo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.menu-auth-wrapper {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.usuario-logado-texto {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--cor-primaria);
+    white-space: nowrap;
+}
+
+.input-busca-topo-container input {
+    background-color: #fff;
+    border: 0.1rem solid var(--cor-borda);
+    border-radius: 1rem;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+    color: var(--cor-primaria);
+    outline: none;
+    width: 9rem;
+    transition: max-width 0.3s ease;
+}
+
+.input-busca-topo-container input:focus {
+    width: 12rem;
+    border-color: var(--cor-destaque);
+}
+
+.btn-login-topo {
+    background: transparent;
+    border: none;
+    color: var(--cor-primaria);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.3rem 0.4rem;
+}
+
+.btn-conta-topo, .btn-icone-carrinho {
+    background: var(--cor-destaque);
+    border: none;
+    color: #fff;
+    padding: 0.3rem 0.7rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: background 0.2s;
+}
+
+.btn-conta-topo:hover, .btn-icone-carrinho:hover {
+    background: #734e2c;
+}
+
+.btn-sair-perfil {
+    background-color: #d9534f !important;
+}
+
+.carrinho-badge {
+    background: #fff;
+    color: #8c6239;
+    padding: 0.05rem 0.25rem;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+/* ========================================== */
+/* 5. HERO BANNER (MÁXIMO 30% DA TELA)        */
+/* ========================================== */
+.hero-banner {
+    position: relative;
+    height: 50vh;                 /* Altura controlada rigorosamente */
+    min-height: 200px;
+    max-height: 50vh;             /* Nunca ultrapassa 30% da tela */
+    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.55)), url('img/capa.png') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    padding: 1.5% 3%;
+    box-sizing: border-box;
+    width: 100% !important;
+}
+
+body.cart-open .hero-banner {
+    width: calc(100% + 290px) !important;
+}
+
+.hero-banner h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    margin: 0.2rem 0;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.hero-banner p {
+    font-size: clamp(0.75rem, 1.4vw, 0.9rem);
+    margin: 0 auto 1rem auto;
+    max-width: 60%;
+    color: #f0eae1;
+}
+
+.hero-botoes {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+}
+
+.btn-hero-primary, .btn-hero-secondary {
+    padding: 0.35rem 1rem;
+    border-radius: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+}
+
+.btn-hero-primary {
+    background: var(--cor-destaque);
+    color: #fff;
+    border: none;
+}
+
+.btn-hero-primary:hover {
+    background: #734e2c;
+}
+
+.btn-hero-secondary {
+    background: transparent;
+    color: #fff;
+    border: 0.1rem solid rgba(255,255,255,0.8);
+}
+
+.btn-hero-secondary:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.btn-filtro-badge {
+    background: var(--cor-destaque);
+    border: 0.1rem solid var(--cor-destaque);
+    color: #fff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-filtro-badge:hover {
+    background: #734e2c;
+}
+
+.btn-limpar-filtro {
+    background: var(--cor-primaria);
+    border: 0.1rem solid var(--cor-primaria);
+}
+
+/* ========================================== */
+/* 6. SECÇÃO PILARES E DESTAQUES                */
+/* ========================================== */
+.seccao-pilares {
+    width: 92% !important;
+    max-width: 92% !important;
+    margin: 1.5% auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    box-sizing: border-box;
+}
+
+.subtitulo-destaque {
+    font-size: 1.2rem;
+    color: var(--cor-destaque);
+    font-weight: 600;
+}
+
+.pilares-titulo h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--cor-primaria);
+    margin: 0.2rem 0 0 0;
+}
+
+.pilares-badges {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ========================================== */
+/* 7. VITRINE DE LIVROS (PROPORCIONAL)        */
+/* ========================================== */
+.main-vitrine {
+    width: 96% !important;
+    max-width: 96% !important;
+    margin: 1.5% auto;
+    padding: 0.5%;
+    box-sizing: border-box;
+}
+
+.vitrine-titulo {
+    text-align: center;
+    margin-bottom: 1.8rem;
+}
+
+.vitrine-titulo h2 {
+    color: #8C6239;
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+}
+
+.vitrine-titulo p {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+/* ========================================== */
+/* VITRINE DE LIVROS (COMPACTA E ALINHADA)    */
+/* ========================================== */
+
+.main-vitrine {
+    width: 96% !important;
+    max-width: 96% !important;
+    margin: 1.5% auto;
+    padding: 0.5%;
+    box-sizing: border-box;
+}
+
+.vitrine-titulo {
+    text-align: center;
+    margin-bottom: 1.8rem;
+}
+
+.vitrine-titulo h2 {
+    color: #8C6239;
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+}
+
+.vitrine-titulo p {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.vitrine-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.2rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: grid-template-columns 0.35s ease;
+}
+
+body.cart-open .vitrine-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+}
+
+/* ========================================== */
+/* CARTÃO DO LIVRO COMPACTO E SEM ESPAÇOS VAZIOS */
+/* ========================================== */
+.livro-card {
+    background: #fff;
+    border: 0.1rem solid var(--cor-borda);
+    border-radius: 6px;
+    padding: 0.5rem;               /* Padding interno reduzido para aproximar os elementos */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    box-shadow: var(--sombra-suave);
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.livro-capa-container {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    height: auto !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.35rem;        /* Espaço reduzido abaixo da capa */
+    background-color: #f4f0ea;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.livro-capa {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+}
+
+.livro-card:hover .livro-capa {
+    transform: scale(1.03);
+}
+
+.livro-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.livro-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--cor-primaria);
+    margin: 0 0 0.1rem 0;          /* Margem mínima */
+    line-height: 1.15;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.livro-autor {
+    font-size: 0.6rem;
+    color: #666;
+    margin: 0 0 0.1rem 0;          /* Margem mínima */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.livro-tematica-tag {
+    font-size: 0.58rem;
+    color: #8c6239;
+    margin: 0 0 0.15rem 0;         /* Margem mínima */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.livro-preco {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--cor-destaque);
+    margin: 0.1rem 0 0.3rem 0;     /* Espaçamento compacto antes do botão */
+}
+
+.livro-card .btn-primario {
+    padding: 0.3rem;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    background: var(--cor-destaque);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.livro-card .btn-primario:hover {
+    background: #734e2c;
+}
+
+/* ========================================== */
+/* 8. PAINEL DO CARRINHO (DRAWER)             */
+/* ========================================== */
+.carrinho-drawer {
+    position: fixed;
+    bottom: 0;
+    right: -290px;
+    width: 290px;
+    max-width: 100% !important;
+    height: auto;
+    max-height: calc(100vh - 60px);
+    background: #fff;
+    box-shadow: -0.3rem 0 1.5rem rgba(0,0,0,0.15);
+    z-index: 1700;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carrinho-drawer.open,
+body.cart-open .carrinho-drawer {
+    right: 0 !important;
+}
+
+.carrinho-header {
+    background: var(--cor-primaria);
+    color: #fff;
+    padding: 3% 4%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.carrinho-header h3 {
+    margin: 0 !important;
+    font-size: 1rem;
+}
+
+.btn-fechar-drawer {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.carrinho-corpo {
+    flex: 1;
+    padding: 3% 4%;
+    overflow-y: auto;
+    max-height: 45vh; /* Scroll interno para muitos itens */
+}
+
+.carrinho-corpo button {
+    background-color: var(--cor-destaque) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 2px 6px !important;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.carrinho-item-titulo {
+    margin: 0.3rem 0;
+    font-size: 0.8rem;
+}
+
+.carrinho-footer {
+    padding: 3% 4%;
+    background: var(--cor-fundo);
+    border-top: 0.1rem solid var(--cor-borda);
+}
+
+.area-balcao {
+    margin-bottom: 8px;
+}
+
+.form-label-small {
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.input-padrao-small {
+    width: 100%;
+    padding: 5px;
+    font-size: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.bloco-pagamento-margem {
+    margin-bottom: 8px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 4%;
+    font-size: 0.72rem;
+    margin-top: 2%;
+}
+
+.carrinho-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-bottom: 2%;
+    color: var(--cor-primaria);
+}
+
+.carrinho-total span:last-child {
+    color: var(--cor-destaque);
+}
+
+.btn-fechar-fatura {
+    margin-top: 3%;
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--cor-destaque);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ========================================== */
+/* 9. MODAIS E ELEMENTOS FLUTUANTES           */
+/* ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1900;
+    padding: 2%;
+    box-sizing: border-box;
+}
+
+.modal-box {
+    background: #fff;
+    padding: 2%;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 35rem;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    box-sizing: border-box;
+}
+
+.login-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0; left: 0;
+    justify-content: center;
+    align-items: center;
+    background: var(--cor-fundo);
+    padding: 2%;
+    box-sizing: border-box;
+    z-index: 2000;
+}
+
+.login-box {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 22rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* ========================================== */
+/* MODAL SOBRE NÓS & EQUIPA                   */
+/* ========================================== */
+.sobre-modal-box {
+    max-width: 44rem !important;
+}
+
+.sobre-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0.1rem solid var(--cor-borda);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.8rem;
+}
+
+.sobre-conteudo {
+    text-align: center;
+}
+
+.texto-cursivo-destaque {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.35rem;
+    color: var(--cor-destaque);
+    display: block;
+    margin: 1rem 0;
+}
+
+.equipe-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;                  /* Aumenta o gap/espaçamento entre os cartões */
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.membro-card {
+    background: #fdfbf7;
+    border: 0.1rem solid var(--cor-borda);
+    border-radius: 6px;
+    padding: 1rem 0.8rem;
+    text-align: center;
+    box-shadow: var(--sombra-suave);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+    transition: transform 0.2s ease;
+}
+
+.membro-card:hover {
+    transform: translateY(-2px);
+}
+
+.membro-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.membro-nome {
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--cor-primaria);
+    line-height: 1.2;
+}
+
+.membro-github {
+    font-size: 0.72rem;
+    color: var(--cor-destaque);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.membro-github:hover {
+    color: #734e2c;
+    text-decoration: underline;
+}
+
+/* Responsivo para telemóveis */
+@media (max-width: 768px) {
+    .equipe-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+}
+
+.form-group { margin-bottom: 2%; text-align: left; }
+.form-group label { display: block; font-size: 0.75rem; margin-bottom: 0.2rem; font-weight: 600; }
+.form-group input, .form-group select { width: 100%; padding: 0.45rem; border: 0.1rem solid #ccc; border-radius: 0.4rem; font-size: 0.75rem; box-sizing: border-box; }
+
+.btn-primario { width: 100%; padding: 0.5rem; background: var(--cor-destaque); color: #fff; border: none; border-radius: 0.4rem; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+.btn-secundario { width: 100%; padding: 0.5rem; background: var(--cor-primaria); color: #fff; border: none; border-radius: 0.4rem; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+.btn-cancelar { width: 100%; padding: 0.35rem; background: transparent; color: #666; border: none; cursor: pointer; font-size: 0.75rem; }
+
+.acoes-perfil-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem; /* Aumenta o espaçamento entre os botões (ajuste para 1rem se preferir maior) */
+}
+
+/* Garante espaçamento uniforme em cada botão da coluna */
+.acoes-perfil-coluna button {
+    margin-bottom: 0 !important; /* Evita conflitos com margens antigas */
+}
+
+/* ========================================== */
+/* PAINEL ADMINISTRATIVO E ABAS (LAYOUT)      */
+/* ========================================== */
+.admin-container {
+    background-color: var(--cor-fundo);
+    min-height: calc(100vh - 60px);
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+}
+
+.admin-conteudo-largura {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.admin-margem-topo {
+    margin-top: 1.5rem;
+}
+
+/* Aba de Livros: 2 colunas (Formulário à esquerda, Catálogo à direita) */
+.admin-flex-livros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .admin-flex-livros {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Cartões do Painel */
+.card-painel {
+    background: #ffffff;
+    border: 0.1rem solid var(--cor-borda);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: var(--sombra-suave);
+    box-sizing: border-box;
+}
+
+.card-formulario {
+    height: 100%;
+}
+
+.card-catalogo {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-full-width {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.card-centralizado-medio {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.admin-card-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--cor-primaria);
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+}
+
+.admin-sub-texto {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Grelha de Métricas (Relatórios & Métricas) */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.metric-card {
+    background: #ffffff;
+    border: 0.1rem solid var(--cor-borda);
+    border-radius: 8px;
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: var(--sombra-suave);
+}
+
+.metric-card span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--cor-destaque);
+    letter-spacing: 0.05rem;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.metric-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--cor-primaria);
+    margin: 0;
+}
+
+/* Barra de Pesquisa de Faturas */
+.search-bar {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border: 0.1rem solid var(--cor-borda);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.search-bar input:focus {
+    border-color: var(--cor-destaque);
+}
+
+/* Caixas de Terminal / Resultados */
+.terminal-box {
+    font-family: 'Courier New', Courier, monospace;
+    padding: 1.2rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.terminal-box.light {
+    background-color: #fcfbfa;
+    border: 0.1rem solid var(--cor-borda);
+    color: var(--cor-primaria);
+}
+
+.terminal-box.dark {
+    background-color: #1a1a1a;
+    color: #e0dcd0;
+    border: 0.1rem solid #333;
+}
+
+/* Área de Rolagem do Catálogo Admin */
+.scroll-area {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.item-lista-admin {
+    padding: 0.8rem 0;
+    border-bottom: 0.1rem solid var(--cor-borda);
+}
+
+.item-lista-admin:last-child {
+    border-bottom: none;
+}
+
+.item-titulo-admin {
+    font-weight: 600;
+    color: var(--cor-primaria);
+    font-size: 0.9rem;
+}
+
+.item-sub-admin {
+    font-size: 0.78rem;
+    color: #666;
+}
+
+.item-estoque-admin {
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.estoque-baixo {
+    color: #d9534f;
+    font-weight: bold;
+}
+
+.estoque-normal {
+    color: #5cb85c;
+}
+
+/* Espaçamentos e Botões específicos das Abas Admin */
+.form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--cor-primaria);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 0.1rem solid var(--cor-borda);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--cor-destaque);
+    outline: none;
+}
+
+.btn-espacamento-superior {
+    margin-top: 1.2rem;
+}
+
+.btn-pesquisar-fatura {
+    width: auto !important;
+    padding: 0 1.5rem !important;
+}
+
+/* ========================================== */
+/* MODAL DE CHECKOUT DETALHADO (ETAPA 2)      */
+/* ========================================== */
+.checkout-modal-box {
+    max-width: 30rem;
+    text-align: left;
+}
+
+.checkout-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0.1rem solid var(--cor-borda);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.checkout-modal-titulo {
+    margin: 0;
+    color: var(--cor-primaria);
+}
+
+.btn-fechar-checkout {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--cor-primaria);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-fechar-checkout:hover {
+    color: var(--cor-destaque);
+}
+
+.checkout-vendedor-box {
+    background-color: #f4f0ea;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--cor-destaque);
+}
+
+.checkout-vendedor-label {
+    margin: 0 0 0.2rem 0 !important;
+    color: var(--cor-destaque);
+}
+
+.checkout-vendedor-texto {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--cor-primaria);
+}
+
+.checkout-total-resumo {
+    background-color: var(--cor-fundo);
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: 0.1rem solid var(--cor-borda);
+    margin: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkout-total-valor {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--cor-destaque);
+}
+
+.checkout-modal-acoes {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.btn-voltar-checkout {
+    background-color: #6c757d !important;
+}
+
+.btn-voltar-checkout:hover {
+    background-color: #5a6268 !important;
+}
+
+/* ========================================== */
+/* 10. MEDIA QUERIES (DISPOSITIVOS MÓVEIS)    */
+/* ========================================== */
+@media (max-width: 1200px) {
+    .vitrine-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 1024px) {
+    .vitrine-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 768px) {
+    body.cart-open {
+        margin-right: 0 !important;
+    }
+
+    body.cart-open .hero-banner {
+        width: 100% !important;
+    }
+
+    .main-vitrine, .seccao-pilares {
+        width: 95% !important;
+        max-width: 95% !important;
+    }
+
+    .equipe-grid {
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+        }
+
+    /* CARRINHO COMPACTO NO RODAPÉ (BOTTOM SHEET REDUZIDO - MÁX 38% DA TELA) */
+    .carrinho-drawer {
+        width: 100% !important;
+        max-width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        bottom: -100% !important;
+        height: auto !important;
+        max-height: 38vh !important;              /* Compacto, nunca ocupa a tela toda */
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
+        box-shadow: 0 -0.4rem 1.2rem rgba(0,0,0,0.18);
+        transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        z-index: 2100;
+    }
+
+    .carrinho-drawer.open,
+    body.cart-open .carrinho-drawer {
+        bottom: 0 !important;
+    }
+
+    .carrinho-corpo {
+        max-height: calc(38vh - 110px) !important;
+        overflow-y: auto !important;             /* Rola apenas internamente para não esconder botões */
+    }
+
+    header.site-header {
+        padding: 2% 3%;
+    }
+
+    .nav-menu, nav.menu-principal { display: none; }
+    .input-busca-topo-container { display: none; }
+
+    .hero-banner {
+        height: 25vh !important;                 /* Banner ainda mais enxuto no mobile */
+        min-height: 140px;
+        max-height: 28vh !important;
+    }
+    .hero-banner h1 { font-size: 1.8rem; }
+    .hero-banner p { display: none; }            /* Oculta subtítulo no mobile para poupar espaço */
+
+    .seccao-pilares { flex-direction: column; text-align: center; gap: 0.6rem; }
+    .pilares-badges { justify-content: center; width: 100%; }
+}
+
+/* MENOR TELA / ECRÃS REDUZIDOS: 3 COLUNAS PROPORCIONAIS */
+@media (max-width: 480px) {
+    .vitrine-grid {
+        grid-template-columns: repeat(4, 1fr) !important; /* Exatamente 3 colunas conforme solicitado */
+        gap: 0.4rem;
+    }
+
+    .livro-card {
+        padding: 3%;
+    }
+
+    .livro-titulo {
+        font-size: 0.6rem;
+    }
+
+    .livro-autor {
+        font-size: 0.5rem;
+    }
+
+    .livro-preco {
+        font-size: 0.65rem;
+    }
+
+    .livro-card .btn-primario {
+        padding: 0.2rem;
+        font-size: 0.55rem;
+    }
+}
