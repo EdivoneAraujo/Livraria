@@ -169,3 +169,20 @@ http://localhost:8080/index.html
 
 ---
 ## 👥 Equipe de Desenvolvimento
+<p align="center">
+  <a href="https://www.linkedin.com/in/edivone-araujo"><img src="https://img.shields.io/badge/LinkedIn-Edivone%20Araújo-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Edivone Araújo"></a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/EdivoneAraujo"><img src="https://img.shields.io/badge/GitHub-Edivone%20Araújo-black?style=for-the-badge&logo=github" alt="GitHub Edivone Araújo"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/edilka-vanessa-menezes-taurino"><img src="https://img.shields.io/badge/LinkedIn-Vanessa%20Taurino-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Vanessa Taurino"></a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/nessataurino-design"><img src="https://img.shields.io/badge/GitHub-Vanessa%20Taurino-black?style=for-the-badge&logo=github" alt="GitHub Vanessa Taurino"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/vinicius-cavalcanti-santos"><img src="https://img.shields.io/badge/LinkedIn-Vanessa%20Taurino-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Vinicius Cavalcanti Santos"></a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/vinicius-cavalcanti-santos"><img src="https://img.shields.io/badge/GitHub-Vanessa%20Taurino-black?style=for-the-badge&logo=github" alt="GitHub Vinicius Cavalcanti Santos"></a>
+</p>
