@@ -1,134 +1,171 @@
-# 📚 Livraria Tríade de Papel (`LibraryEdis`)
-
 <p align="center">
   <img src="src/main/resources/static/img/capa.png" alt="Capa da Livraria Tríade de Papel" width="100%">
 </p>
 
-Sistema web full-stack para gestão de acervo literário, controle de vendas no balcão/online, emissão de faturas e acompanhamento de métricas comerciais. Desenvolvido como projeto acadêmico da disciplina de **Programação Orientada a Objetos (POO)** no **IFPE – Campus Belo Jardim**.
+<h1 align="center">📚 Livraria Tríade de Papel (LibraryEdis)</h1>
+
+<p align="center">
+  <strong>Sistema Web Full-Stack de Gestão de Acervo Literário, Vendas e Faturamento</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 21">
+  <img src="https://img.shields.io/badge/Spring_Boot-3.3.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
+</p>
 
 ---
 
-## 🚀 Funcionalidades Principais
+## 📖 Visão Geral
 
-* **Vitrine Digital & Catálogo:** Exibição de livros disponíveis em estoque com filtros rápidos por **Temática**, **Lançamentos**, **Promoções** e busca dinâmica por título ou autor.
-* **Perfis de Acesso:**
-  * **Cliente:** Criação de conta, login por CPF, carrinho de compras, checkout com opção de **Cartão** ou **PIX** (com geração dinâmica de QR Code na fatura) e consulta ao histórico de compras.
-  * **Vendedor (Funcionário):** Autenticação por CPF ou matrícula, atendimento de balcão vinculando o CPF do cliente à venda e consulta às vendas realizadas.
-  * **Administrador:** Cadastro de novos livros e autores, registro de funcionários (`Vendedor`), pesquisa de faturas e painel de **Relatórios & Métricas** (faturamento total, total de vendas, livro mais vendido, melhor cliente e alertas de estoque mínimo).
-* **Modelagem Orientada a Objetos:**
-  * Uso de herança JPA com estratégia `InheritanceType.JOINED` entre a superclasse `Pessoa` e as especializações `Cliente`, `Usuario` e `Vendedor`.
-  * Normalização da entidade `Autor` em relacionamento `1:N` com `Livro`.
-  * Controle transacional (`@Transactional`) no fechamento de pedidos em lote, validando e baixando estoque automaticamente antes da emissão da `Fatura`.
+A **Livraria Tríade de Papel (`LibraryEdis`)** é uma plataforma web full-stack desenvolvida para automatizar o controle de acervo bibliográfico, atendimento comercial (balcão e vitrine online), baixa transacional de estoque e emissão de faturas com pagamento via Cartão ou PIX.
+
+O projeto foi concebido no contexto acadêmico do **Instituto Federal de Pernambuco (IFPE) – Campus Belo Jardim**, aplicando conceitos avançados de **Programação Orientada a Objetos (POO)**, persistência relacional normalizada com **Hibernate/JPA** (`InheritanceType.JOINED`) e arquitetura **RESTful**.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🎯 Requisitos do Sistema (SRS)
 
-### Back-end
-* **Java 21**
-* **Spring Boot 3.3.0** (Spring Web, Spring Data JPA)
-* **Hibernate ORM**
-* **PostgreSQL**
-* **Lombok**
-* **Maven**
+### Requisitos Funcionais
 
-### Front-end
-* **HTML5**
-* **CSS3** (Design responsivo com Grid/Flexbox, drawer lateral de carrinho e modais)
-* **JavaScript (ES6+ / Fetch API)**
+| Código | Requisito | Descrição |
+| :--- | :--- | :--- |
+| **RF01** | **Vitrine Digital e Busca** | Exibir catálogo de livros disponíveis em estoque com pesquisa em tempo real por título ou autor. |
+| **RF02** | **Filtros de Acervo** | Permitir filtragem rápida do catálogo por **Temática**, **Lançamentos** e **Promoções**. |
+| **RF03** | **Gestão de Clientes** | Permitir cadastro de novos clientes e autenticação via CPF para realização de compras e consulta de histórico. |
+| **RF04** | **Gestão de Funcionários** | Permitir ao administrador cadastrar vendedores vinculados à herança `Pessoa` $\rightarrow$ `Vendedor` (CPF e matrícula). |
+| **RF05** | **Cadastro e Manutenção de Acervo** | Permitir o registro e atualização de livros e autores, incluindo preço, temática, estoque atual e estoque mínimo. |
+| **RF06** | **Carrinho de Compras** | Gerenciar itens adicionados ao pedido com ajuste dinâmico de quantidade e cálculo automático do valor total. |
+| **RF07** | **Venda em Lote e Atendimento de Balcão** | Processar pedidos com múltiplos itens, permitindo que vendedores registrem vendas presenciais associadas ao CPF do cliente. |
+| **RF08** | **Emissão de Fatura e Pagamento** | Gerar fatura única vinculada à venda com suporte a **Cartão** e **PIX** (exibição de QR Code e chave Copia e Cola). |
+| **RF09** | **Controle e Alerta de Estoque** | Validar disponibilidade antes da venda, realizar baixa automática e emitir alertas quando o estoque atingir o limite mínimo. |
+| **RF10** | **Painel de Relatórios e Métricas** | Consolidar faturamento total, volume de vendas, produto mais vendido, melhor cliente e pesquisa de faturas. |
 
----
+### Requisitos Não Funcionais
 
-## 🗄️ Estrutura do Banco de Dados
-
-O modelo relacional está estruturado no PostgreSQL com as seguintes tabelas principais:
-
-* `pessoa` (`cpf` PK, `nome`, `email`, `telefone`)
-* `cliente` (`cpf` PK/FK, `sexo`, `uf`)
-* `usuario` (`cpf` PK/FK, `senha`, `perfil`)
-* `vendedor` (`cpf` PK/FK, `matricula`, `data_entrada`, `tempo_servico`, `salario`)
-* `autor` (`id` PK, `nome`)
-* `livro` (`id` PK, `titulo`, `tematica`, `preco`, `quantidade_estoque`, `estoque_minimo`, `imagem`, `autor_id` FK)
-* `venda` (`id` PK, `data_venda`, `total`, `forma_pagamento`, `alerta_estoque`, `cliente_cpf` FK, `vendedor_cpf` FK)
-* `item_venda` (`id` PK, `venda_id` FK, `livro_id` FK, `quantidade`, `preco_unitario`)
-* `fatura` (`id` PK, `venda_id` FK, `numero_fatura`, `data_emissao`)
+| Código | Requisito | Descrição |
+| :--- | :--- | :--- |
+| **RNF01** | **Integridade Transacional** | Toda operação de venda em lote e baixa de estoque deve ser atômica (`@Transactional`), garantindo rollback em caso de falha. |
+| **RNF02** | **Normalização Relacional** | O esquema do banco de dados deve seguir a 3ª Forma Normal (3FN), separando `Autor` de `Livro` e aplicando herança `JOINED` em `Pessoa`. |
+| **RNF03** | **Validação de Esquema** | A aplicação deve validar o DDL físico do PostgreSQL na inicialização (`spring.jpa.hibernate.ddl-auto=validate`). |
+| **RNF04** | **Segurança de Credenciais** | Credenciais de acesso ao banco de dados devem ser injetadas via variáveis de ambiente (`DB_USER`, `DB_PASSWORD`), sem exposição no repositório. |
+| **RNF05** | **Responsividade de Interface** | O front-end deve adaptar-se a desktops e dispositivos móveis, incluindo gaveta lateral (*drawer*) para o carrinho. |
 
 ---
 
-## 📁 Estrutura do Projeto
+## 🏗️ Arquitetura e Modelagem
+
+### Arquitetura em Camadas (Spring Boot)
 
 ```text
+┌─────────────────────────────────────────────────────────────┐
+│                    Front-end (SPA Estática)                 │
+│              HTML5  •  CSS3  •  JavaScript (Fetch)          │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ REST / JSON (HTTP :8080)
+┌──────────────────────────────▼──────────────────────────────┐
+│                     Camada Controller                       │
+│  LivroController • AutorController • ClienteController      │
+│  VendedorController • UsuarioController • VendaController   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ DTOs & Entidades
+┌──────────────────────────────▼──────────────────────────────┐
+│                  Camada Service (Negócio)                   │
+│       LivroService  •  ClienteService  •  VendaService      │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Spring Data JPA / JPQL
+┌──────────────────────────────▼──────────────────────────────┐
+│                    Camada Repository                        │
+│     Livro • Autor • Cliente • Vendedor • Usuario            │
+│                    Venda • Fatura                           │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ JDBC / Hibernate ORM
+┌──────────────────────────────▼──────────────────────────────┐
+│                  Banco de Dados PostgreSQL                  │
+│             Schema Normalizado (Herança JOINED)             │
+└─────────────────────────────────────────────────────────────┘
+```
+---
+## Modelo Relacional (PostgreSQL)
+pessoa (cpf, nome, email, telefone)
+
+cliente (cpf, sexo, uf)
+
+usuario (cpf, senha, perfil)
+
+vendedor (cpf, matricula, data_entrada, tempo_servico, salario)
+
+autor (id, nome)
+
+livro (id, titulo, tematica, preco, quantidade_estoque, estoque_minimo, imagem, autor_id)
+
+venda (id, data_venda, total, forma_pagamento, alerta_estoque, cliente_cpf, vendedor_cpf)
+
+item_venda (id, venda_id, livro_id, quantidade, preco_unitario)
+
+fatura (id, venda_id, numero_fatura, data_emissao)
+
+(Legenda: Negrito = Chave Primária | Itálico = Chave Estrangeira)
+
+---
+## 📁 Estrutura de Diretórios
+Plaintext
 LibraryEdis/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/livraria/
-│   │   │   ├── Controller/    # Endpoints REST (/api/livros, /api/autores, /api/clientes, /api/vendedores, /api/vendas, /api/auth)
-│   │   │   ├── DTO/           # Objetos de transferência (LoginDTO, PedidoVendaDTO, ItemCarrinhoDTO, etc.)
-│   │   │   ├── Model/         # Entidades JPA e Enums (Pessoa, Cliente, Usuario, Vendedor, Autor, Livro, Venda, ItemVenda, Fatura)
-│   │   │   ├── Repository/    # Interfaces Spring Data JPA e consultas JPQL
-│   │   │   ├── Service/       # Regras de negócio e controle transacional de vendas e acervo
+│   │   │   ├── Controller/             # Controladores REST (/api/*)
+│   │   │   ├── DTO/                    # Objetos de Transferência de Dados
+│   │   │   ├── Model/                  # Entidades JPA e Enums
+│   │   │   ├── Repository/             # Repositórios Spring Data JPA
+│   │   │   ├── Service/                # Regras de negócio e transações
 │   │   │   └── LibraryEdisApplication.java
 │   │   └── resources/
-│   │       ├── static/        # Front-end (index.html, style.css, script.js, img/)
-│   │       └── application.properties
-└── pom.xml
-```
+│   │       ├── static/
+│   │       │   ├── img/                # Capa, logotipos e imagens do acervo
+│   │       │   ├── index.html          # Interface principal (Loja, Cliente, Vendedor e Admin)
+│   │       │   ├── style.css           # Folha de estilos responsiva
+│   │       │   └── script.js           # Lógica de consumo da API e gerenciamento de estado
+│   │       └── application.properties  # Configurações de conexão e Hibernate
+└── pom.xml                             # Dependências Maven
 
 ---
-⚙️ Como Executar o Projeto Localmente
-Pré-requisitos
-JDK 21 instalado
+## ⚙️ Instalação e Execução
+1. Pré-requisitos
+Java Development Kit (JDK) 21
 
-PostgreSQL rodando localmente na porta 5432
+PostgreSQL ativo na porta 5432
 
-Maven (ou wrapper integrado na IDE)
+Maven 3.9+
 
-1. Configurar o Banco de Dados
-Crie um banco de dados chamado loja no PostgreSQL:
+2. Configuração do Banco de Dados
+Crie o banco de dados no PostgreSQL:
 
 SQL
 CREATE DATABASE loja;
-
-2. Definir Variáveis de Ambiente
-Configure as credenciais do banco no seu sistema ou nas configurações de execução da IDE:
+3. Variáveis de Ambiente
+Defina as credenciais de acesso ao PostgreSQL no ambiente do sistema ou nas configurações de execução da IDE:
 
 Snippet de código
-DB_USER=seu_usuario_postgres
-DB_PASSWORD=sua_senha_postgres
-
-3. Executar a Aplicação
-Clone o repositório e inicie o servidor Spring Boot:
-
+DB_USER=postgres
+DB_PASSWORD=sua_senha
+4. Executar o Projeto
 Bash
+# Clonar o repositório
 git clone [https://github.com/EdivoneAraujo/Livraria.git](https://github.com/EdivoneAraujo/Livraria.git)
-cd LibraryEdis
-mvn spring-boot:run
 
-4. Acessar no Navegador
-Com o servidor ativo na porta 8080, acesse:
+# Acessar o diretório
+cd Livraria
+
+# Compilar e iniciar a aplicação
+mvn spring-boot:run
+Após a inicialização no console, acesse a aplicação pelo navegador:
 
 Plaintext
 http://localhost:8080/index.html
 
 ---
-👥 Equipe de Desenvolvimento
-Edilka Vanessa Menezes Taurino — @nessataurino-design   
-index.html
-
-Edivoneide Ferreira Silva de Araújo — @EdivoneAraujo   
-index.html
-
-Vinícius Cavalcanti Santos — @ViniciusCavalcantiSantos   
-index.html
-
-
----
-
-### Como salvar e enviar para o GitHub:
-1. Crie (ou substitua) o arquivo **`README.md`** na pasta raiz do projeto `LibraryEdis` e cole o conteúdo acima.
-2. No terminal do IntelliJ (`Alt + F12`), rode:
-   ```bash
-   git add README.md
-   git commit -m "Adiciona documentação completa no README.md"
-   git push origin main
-   ```
+## 👥 Equipe de Desenvolvimento
