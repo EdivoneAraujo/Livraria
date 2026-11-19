@@ -20,26 +20,18 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginRequest) {
-        System.out.println("===> Tentativa de login recebida para o e-mail: " + loginRequest.getEmail());
-
         Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(loginRequest.getEmail());
 
         if (usuarioOpt.isPresent()) {
             Usuario user = usuarioOpt.get();
-            System.out.println("===> Utilizador encontrado na BD: " + user.getNome());
-            System.out.println("===> Senha na BD: [" + user.getSenha() + "] | Senha enviada: [" + loginRequest.getSenha() + "]");
-
             if (user.getSenha().equals(loginRequest.getSenha())) {
                 return ResponseEntity.ok(Map.of(
                         "sucesso", true,
                         "mensagem", "Login efetuado com sucesso!",
-                        "nome", user.getNome()
+                        "nome", user.getNome(),
+                        "perfil", user.getPerfil() != null ? user.getPerfil() : "USUARIO"
                 ));
-            } else {
-                System.out.println("===> ERRO: A senha não coincide!");
             }
-        } else {
-            System.out.println("===> ERRO: E-mail não encontrado na base de dados!");
         }
 
         return ResponseEntity.status(401).body(Map.of(
@@ -49,7 +41,21 @@ public class UsuarioController {
     }
 
     @PostMapping("/cadastrar")
-    public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> cadastrar(@RequestBody Usuario usuario) {
+        if (usuario.getCpf() == null || usuario.getCpf().isBlank()) {
+            return ResponseEntity.badRequest().body("O CPF é obrigatório para cadastrar um usuário.");
+        }
+
+        usuario.setCpf(usuario.getCpf().replaceAll("\\D", ""));
+
+        if (usuarioRepository.findById(usuario.getCpf()).isPresent()) {
+            return ResponseEntity.badRequest().body("Já existe um usuário cadastrado com este CPF.");
+        }
+
+        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body("Já existe um usuário cadastrado com este e-mail.");
+        }
+
         Usuario novoUsuario = usuarioRepository.save(usuario);
         return ResponseEntity.ok(novoUsuario);
     }

@@ -26,19 +26,21 @@ public class ClienteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> buscarPorId(@PathVariable String id) {
-        return clienteService.buscarPorId(id)
+        String cpfLimpo = id.replaceAll("\\D", "");
+        return clienteService.buscarPorId(cpfLimpo)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Único método @PostMapping para criação de clientes
     @PostMapping
     public ResponseEntity<?> cadastrarCliente(@RequestBody Cliente novoCliente) {
-        if (novoCliente.getCpf() != null) {
-            novoCliente.setCpf(novoCliente.getCpf().replaceAll("\\D", ""));
+        if (novoCliente.getCpf() == null || novoCliente.getCpf().isBlank()) {
+            return ResponseEntity.badRequest().body("O CPF é obrigatório.");
         }
 
-        if (clienteRepository.findByCpf(novoCliente.getCpf()).isPresent()) {
+        novoCliente.setCpf(novoCliente.getCpf().replaceAll("\\D", ""));
+
+        if (clienteRepository.findById(novoCliente.getCpf()).isPresent()) {
             return ResponseEntity.badRequest().body("Já existe um cliente cadastrado com este CPF/Documento.");
         }
 
@@ -48,11 +50,10 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> atualizar(@PathVariable String id, @RequestBody Cliente clienteAtualizado) {
-        return clienteService.buscarPorId(id).map(cliente -> {
+        String cpfLimpo = id.replaceAll("\\D", "");
+        return clienteService.buscarPorId(cpfLimpo).map(cliente -> {
+            // Não alteramos o CPF pois ele é a chave primária (herança JOINED com Pessoa)
             cliente.setNome(clienteAtualizado.getNome());
-            cliente.setCpf(clienteAtualizado.getCpf());
-
-            // Sugestão: pode adicionar a atualização dos restantes campos aqui se desejar
             cliente.setTelefone(clienteAtualizado.getTelefone());
             cliente.setEmail(clienteAtualizado.getEmail());
             cliente.setSexo(clienteAtualizado.getSexo());
@@ -64,8 +65,9 @@ public class ClienteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable String id) {
-        if (clienteService.buscarPorId(id).isPresent()) {
-            clienteService.eliminar(id);
+        String cpfLimpo = id.replaceAll("\\D", "");
+        if (clienteService.buscarPorId(cpfLimpo).isPresent()) {
+            clienteService.eliminar(cpfLimpo);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

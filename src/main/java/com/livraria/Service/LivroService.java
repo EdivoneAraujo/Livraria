@@ -27,12 +27,23 @@ public class LivroService {
     }
 
     public Livro guardar(Livro livro) {
-        if (livro.getAutor() != null && livro.getAutor().getId() == null && livro.getAutor().getNome() != null) {
+        if (livro.getAutor() == null) {
+            throw new IllegalArgumentException("O autor do livro é obrigatório.");
+        }
+
+        if (livro.getAutor().getId() != null) {
+            Autor autorExistente = autorRepository.findById(livro.getAutor().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Autor não encontrado (ID: " + livro.getAutor().getId() + ")."));
+            livro.setAutor(autorExistente);
+        } else if (livro.getAutor().getNome() != null && !livro.getAutor().getNome().isBlank()) {
             String nomeAutor = livro.getAutor().getNome().trim();
             Autor autor = autorRepository.findByNomeIgnoreCase(nomeAutor)
                     .orElseGet(() -> autorRepository.save(new Autor(nomeAutor)));
             livro.setAutor(autor);
+        } else {
+            throw new IllegalArgumentException("Informe o ID ou o nome do autor.");
         }
+
         return livroRepository.save(livro);
     }
 

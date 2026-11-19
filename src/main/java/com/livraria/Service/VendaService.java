@@ -70,10 +70,13 @@ public class VendaService {
         // 3. Associação segura do Vendedor
         if (pedido.getVendedorCpf() != null && !pedido.getVendedorCpf().isBlank()) {
             String docVendedor = pedido.getVendedorCpf().trim();
-            Vendedor vendedor = vendedorRepository.findByCpfOuMatricula(docVendedor)
+            String docLimpo = docVendedor.replaceAll("\\D", "");
+
+            Vendedor vendedor = vendedorRepository.findByCpfOuMatricula(docLimpo.isEmpty() ? docVendedor : docLimpo)
                     .orElseGet(() -> {
                         Vendedor novoVendedor = new Vendedor();
-                        novoVendedor.setCpf(docVendedor);
+                        String cpfNovo = docLimpo.isEmpty() ? "99999999999" : docLimpo;
+                        novoVendedor.setCpf(cpfNovo);
                         novoVendedor.setMatricula(docVendedor);
                         novoVendedor.setNome("Vendedor " + docVendedor);
                         return vendedorRepository.save(novoVendedor);

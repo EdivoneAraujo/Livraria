@@ -15,7 +15,6 @@ public class LivroController {
     @Autowired
     private LivroService livroService;
 
-    // Endpoint corrigido para fornecer a lista completa de livros em JSON para o front-end
     @GetMapping("/acervo")
     public List<Livro> listarAcervo() {
         return livroService.listarTodos();
@@ -34,26 +33,37 @@ public class LivroController {
     }
 
     @PostMapping
-    public ResponseEntity<Livro> cadastrarLivro(@RequestBody Livro novoLivro) {
-        if (novoLivro.getImagem() == null || novoLivro.getImagem().isEmpty()) {
-            novoLivro.setImagem("");
+    public ResponseEntity<?> cadastrarLivro(@RequestBody Livro novoLivro) {
+        try {
+            if (novoLivro.getImagem() == null || novoLivro.getImagem().isEmpty()) {
+                novoLivro.setImagem("");
+            }
+            Livro salvo = livroService.guardar(novoLivro);
+            return ResponseEntity.ok(salvo);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        Livro salvo = livroService.guardar(novoLivro);
-        return ResponseEntity.ok(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Livro> atualizar(@PathVariable Long id, @RequestBody Livro livroAtualizado) {
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Livro livroAtualizado) {
         return livroService.buscarPorId(id).map(livro -> {
             livro.setTitulo(livroAtualizado.getTitulo());
+            livro.setTematica(livroAtualizado.getTematica());
             livro.setAutor(livroAtualizado.getAutor());
             livro.setPreco(livroAtualizado.getPreco());
             livro.setQuantidadeEstoque(livroAtualizado.getQuantidadeEstoque());
             livro.setEstoqueMinimo(livroAtualizado.getEstoqueMinimo());
+
             if (livroAtualizado.getImagem() != null && !livroAtualizado.getImagem().isEmpty()) {
                 livro.setImagem(livroAtualizado.getImagem());
             }
-            return ResponseEntity.ok(livroService.guardar(livro));
+
+            try {
+                return ResponseEntity.ok(livroService.guardar(livro));
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
         }).orElse(ResponseEntity.notFound().build());
     }
 
