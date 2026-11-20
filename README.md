@@ -2,7 +2,7 @@
   <img src="src/main/resources/static/img/capa.png" alt="Capa da Livraria Tríade de Papel" width="100%">
 </p>
 
-<h1 align="center">📚 Livraria Tríade de Papel (LibraryEdis)</h1>
+<h1 align="center">📚 Livraria Tríade de Papel</h1>
 
 <p align="center">
   <strong>Sistema Web Full-Stack de Gestão de Acervo Literário, Vendas e Faturamento</strong>
@@ -21,7 +21,7 @@
 
 ## 📖 Visão Geral
 
-A **Livraria Tríade de Papel (`LibraryEdis`)** é uma plataforma web full-stack desenvolvida para automatizar o controle de acervo bibliográfico, atendimento comercial (balcão e vitrine online), baixa transacional de estoque e emissão de faturas com pagamento via Cartão ou PIX.
+A **Livraria Tríade de Papel** é uma plataforma web full-stack desenvolvida para automatizar o controle de acervo bibliográfico, atendimento comercial (balcão e vitrine online), baixa transacional de estoque e emissão de faturas com pagamento via Cartão ou PIX.
 
 O projeto foi concebido no contexto acadêmico do **Instituto Federal de Pernambuco (IFPE) – Campus Belo Jardim**, aplicando conceitos avançados de **Programação Orientada a Objetos (POO)**, persistência relacional normalizada com **Hibernate/JPA** (`InheritanceType.JOINED`) e arquitetura **RESTful**.
 
@@ -182,7 +182,7 @@ http://localhost:8080/index.html
 </p>
 
 <p align="center">
-  <a href="https://www.linkedin.com/in/vinicius-cavalcanti-santos"><img src="https://img.shields.io/badge/LinkedIn-Vanessa%20Taurino-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Vinicius Cavalcanti Santos"></a>
+  <a href="https://www.linkedin.com/in/vinicius-cavalcanti-santos"><img src="https://img.shields.io/badge/LinkedIn-Vinícius%20Santos-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Vinicius Cavalcanti Santos"></a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/vinicius-cavalcanti-santos"><img src="https://img.shields.io/badge/GitHub-Vanessa%20Taurino-black?style=for-the-badge&logo=github" alt="GitHub Vinicius Cavalcanti Santos"></a>
+  <a href="https://github.com/vinicius-cavalcanti-santos"><img src="https://img.shields.io/badge/GitHub-Vinícius%20Santos-black?style=for-the-badge&logo=github" alt="GitHub Vinicius Cavalcanti Santos"></a>
 </p>
