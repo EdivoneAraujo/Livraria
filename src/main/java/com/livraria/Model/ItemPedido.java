@@ -4,31 +4,33 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "item_venda")
-public class ItemVenda {
+@Table(name = "item_pedido")
+public class ItemPedido {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private ItemPedidoId id = new ItemPedidoId();
 
-    @ManyToOne
-    @JoinColumn(name = "venda_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("idPedido")
+    @JoinColumn(name = "id_pedido", nullable = false)
     @JsonIgnoreProperties("itens")
-    private Venda venda;
+    private Pedido pedido;
 
-    @ManyToOne
-    @JoinColumn(name = "livro_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_livro", nullable = false)
     private Livro livro;
 
+    @Column(nullable = false)
     private Integer quantidade;
+
+    @Column(name = "preco_unitario", nullable = false)
     private Double precoUnitario;
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public ItemPedidoId getId() { return id; }
+    public void setId(ItemPedidoId id) { this.id = id; }
 
-    public Venda getVenda() { return venda; }
-    public void setVenda(Venda venda) { this.venda = venda; }
+    public Pedido getPedido() { return pedido; }
+    public void setPedido(Pedido pedido) { this.pedido = pedido; }
 
     public Livro getLivro() { return livro; }
     public void setLivro(Livro livro) { this.livro = livro; }

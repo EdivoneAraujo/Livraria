@@ -9,30 +9,34 @@ public class Fatura {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_fatura")
+    private Long idFatura;
 
     @OneToOne
-    @JoinColumn(name = "venda_id", nullable = false)
-    private Venda venda;
+    @JoinColumn(name = "id_pedido", nullable = false, unique = true)
+    private Pedido pedido;
 
-    @Column(nullable = false, unique = true)
-    private String numeroFatura; // Ex: FAT-2026-0001
+    @Column(name = "numero_fatura", nullable = false, unique = true, length = 50)
+    private String numeroFatura;
 
-    @Column(nullable = false)
+    @Column(name = "data_emissao", nullable = false)
     private LocalDateTime dataEmissao;
 
     @PrePersist
     protected void onCreate() {
-        dataEmissao = LocalDateTime.now();
-        numeroFatura = "FAT-" + System.currentTimeMillis(); // Gerador simples de número único
+        if (dataEmissao == null) {
+            dataEmissao = LocalDateTime.now();
+        }
+        if (numeroFatura == null) {
+            numeroFatura = "FAT-" + System.currentTimeMillis();
+        }
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getIdFatura() { return idFatura; }
+    public void setIdFatura(Long idFatura) { this.idFatura = idFatura; }
 
-    public Venda getVenda() { return venda; }
-    public void setVenda(Venda venda) { this.venda = venda; }
+    public Pedido getPedido() { return pedido; }
+    public void setPedido(Pedido pedido) { this.pedido = pedido; }
 
     public String getNumeroFatura() { return numeroFatura; }
     public void setNumeroFatura(String numeroFatura) { this.numeroFatura = numeroFatura; }

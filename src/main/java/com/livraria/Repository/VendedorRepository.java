@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface VendedorRepository extends JpaRepository<Vendedor, String> {
+public interface VendedorRepository extends JpaRepository<Vendedor, Long> {
 
-    // Query explícita para garantir que encontra o vendedor quer pelo CPF, quer pela Matrícula
+    // Encontra o vendedor quer pelo CPF, quer pela Matrícula
     @Query("SELECT v FROM Vendedor v WHERE v.cpf = :id OR v.matricula = :id")
     Optional<Vendedor> findByCpfOuMatricula(@Param("id") String identificador);
 }

@@ -50,7 +50,7 @@ public class LivroController {
         return livroService.buscarPorId(id).map(livro -> {
             livro.setTitulo(livroAtualizado.getTitulo());
             livro.setTematica(livroAtualizado.getTematica());
-            livro.setAutor(livroAtualizado.getAutor());
+            livro.setAutores(livroAtualizado.getAutores());
             livro.setPreco(livroAtualizado.getPreco());
             livro.setQuantidadeEstoque(livroAtualizado.getQuantidadeEstoque());
             livro.setEstoqueMinimo(livroAtualizado.getEstoqueMinimo());

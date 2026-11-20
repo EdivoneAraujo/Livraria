@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/vendedores")
+@CrossOrigin(origins = "*")
 public class VendedorController {
 
     @Autowired
@@ -22,9 +23,11 @@ public class VendedorController {
 
     @PostMapping
     public ResponseEntity<?> cadastrarVendedor(@RequestBody Vendedor novoVendedor) {
-        if (novoVendedor.getCpf() != null) {
-            novoVendedor.setCpf(novoVendedor.getCpf().replaceAll("\\D", ""));
+        if (novoVendedor.getCpf() == null || novoVendedor.getCpf().isBlank()) {
+            return ResponseEntity.badRequest().body("O CPF do vendedor é obrigatório.");
         }
+
+        novoVendedor.setCpf(novoVendedor.getCpf().replaceAll("\\D", ""));
 
         if (vendedorRepository.findByCpfOuMatricula(novoVendedor.getCpf()).isPresent()) {
             return ResponseEntity.badRequest().body("Já existe um funcionário cadastrado com este CPF.");
@@ -32,6 +35,16 @@ public class VendedorController {
 
         if (vendedorRepository.findByCpfOuMatricula(novoVendedor.getMatricula()).isPresent()) {
             return ResponseEntity.badRequest().body("Já existe um funcionário cadastrado com esta matrícula.");
+        }
+
+        if (novoVendedor.getSenha() == null || novoVendedor.getSenha().isBlank()) {
+            novoVendedor.setSenha("123456");
+        }
+
+        // Vincula o supervisor caso o ID tenha sido enviado no payload
+        if (novoVendedor.getSupervisor() != null && novoVendedor.getSupervisor().getIdPessoa() != null) {
+            vendedorRepository.findById(novoVendedor.getSupervisor().getIdPessoa())
+                    .ifPresent(novoVendedor::setSupervisor);
         }
 
         Vendedor salvo = vendedorRepository.save(novoVendedor);

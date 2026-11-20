@@ -7,15 +7,23 @@ const API_BASE_URL = 'http://localhost:8080/api';
 let carrinho = [];
 
 // ==========================================
-// FUNÇÃO AUXILIAR: EXTRAÇÃO SEGURA DO AUTOR
+// FUNÇÃO AUXILIAR: EXTRAÇÃO SEGURA DOS AUTORES
 // ==========================================
-function obterNomeAutor(autor) {
-    if (!autor) return 'Autor desconhecido';
-    if (typeof autor === 'string') return autor;
-    if (typeof autor === 'object') {
-        return autor.nome || autor.nomeAutor || 'Autor desconhecido';
+function obterNomeAutor(livroOuAutor) {
+    if (!livroOuAutor) return 'Autor desconhecido';
+    if (typeof livroOuAutor === 'string') return livroOuAutor;
+
+    // Caso receba o objeto Livro completo com o array Set<Autor> 'autores'
+    if (Array.isArray(livroOuAutor.autores) && livroOuAutor.autores.length > 0) {
+        return livroOuAutor.autores.map(a => a.nome || a.nomeAutor || 'Autor').join(', ');
     }
-    return 'Autor desconhecido';
+
+    // Compatibilidade caso venha objeto Autor isolado
+    if (livroOuAutor.autor) {
+        return obterNomeAutor(livroOuAutor.autor);
+    }
+
+    return livroOuAutor.nome || livroOuAutor.nomeAutor || 'Autor desconhecido';
 }
 
 // ==========================================
@@ -60,7 +68,6 @@ function verificarEstadoSessao() {
     }
 }
 
-// Controlo dinâmico dos submenus e elementos do cabeçalho global fixo
 function atualizarModoCabecalho(modo) {
     const navLoja = document.getElementById('nav-mode-loja');
     const navAdmin = document.getElementById('nav-mode-admin');
@@ -91,7 +98,6 @@ function atualizarModoCabecalho(modo) {
     verificarEstadoSessao();
 }
 
-// Executar assim que a página carregar
 window.addEventListener('DOMContentLoaded', () => {
     verificarEstadoSessao();
     carregarVitrine();
@@ -156,16 +162,12 @@ function escolherPerfil(perfil) {
 function abrirModalSobre(event) {
     if (event) event.preventDefault();
     const modal = document.getElementById('modal-sobre');
-    if (modal) {
-        modal.classList.remove('oculto');
-    }
+    if (modal) modal.classList.remove('oculto');
 }
 
 function fecharModalSobre() {
     const modal = document.getElementById('modal-sobre');
-    if (modal) {
-        modal.classList.add('oculto');
-    }
+    if (modal) modal.classList.add('oculto');
 }
 
 // ==========================================
@@ -192,31 +194,29 @@ async function realizarLogin(event) {
         const resposta = await fetch(`${API_BASE_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, senha })
+            body: JSON.stringify({ identificador: email, email, senha })
         });
 
         const dados = await resposta.json();
 
         if (resposta.ok && dados.sucesso) {
             localStorage.setItem('adminLogadoEmail', email);
+            if (dados.idPessoa) localStorage.setItem('adminLogadoId', dados.idPessoa);
 
             ocultarTodosPainels();
             const appSistema = document.getElementById('app-sistema');
             if (appSistema) appSistema.classList.remove('oculto');
 
             atualizarModoCabecalho('admin');
-
             if (botaoEntrar) botaoEntrar.textContent = "Entrar no Sistema";
 
             carregarAcervoAdmin();
             atualizarMetricas();
             mostrarAba('livros');
-
         } else {
             alert(dados.mensagem || "E-mail ou palavra-passe incorretos.");
             if (botaoEntrar) botaoEntrar.textContent = "Entrar no Sistema";
         }
-
     } catch (erro) {
         console.error("Erro ao comunicar com o servidor de autenticação:", erro);
         alert("Não foi possível conectar ao servidor. Verifique se o backend está ligado na porta 8080.");
@@ -226,18 +226,22 @@ async function realizarLogin(event) {
 
 function realizarLogout() {
     localStorage.removeItem('adminLogadoEmail');
+    localStorage.removeItem('adminLogadoId');
     voltarParaLoja();
 }
 
 function logoutGeral() {
+    localStorage.removeItem('clienteLogadoId');
     localStorage.removeItem('clienteLogadoCPF');
     localStorage.removeItem('clienteLogadoNome');
     localStorage.removeItem('clienteLogadoEmail');
     localStorage.removeItem('clienteLogadoTelefone');
+    localStorage.removeItem('clienteLogadoEndereco');
 
     localStorage.removeItem('vendedorLogadoCPF');
     localStorage.removeItem('vendedorLogadoNome');
     localStorage.removeItem('adminLogadoEmail');
+    localStorage.removeItem('adminLogadoId');
 
     voltarParaLoja();
     alert("Sessão terminada com sucesso.");
@@ -248,16 +252,12 @@ function logoutGeral() {
 // ==========================================
 function abrirTelaEscolhaLogin() {
     const modal = document.getElementById('tela-escolha-login');
-    if (modal) {
-        modal.classList.remove('oculto');
-    }
+    if (modal) modal.classList.remove('oculto');
 }
 
 function fecharTelaEscolhaLogin() {
     const modal = document.getElementById('tela-escolha-login');
-    if (modal) {
-        modal.classList.add('oculto');
-    }
+    if (modal) modal.classList.add('oculto');
 }
 
 // ==========================================
@@ -302,9 +302,15 @@ function mostrarAba(abaId, event) {
 async function cadastrarLivroAdmin(event) {
     event.preventDefault();
 
+    const autoresInput = document.getElementById('livro-autor').value.trim();
+    const listaAutores = autoresInput.split(',')
+        .map(nome => nome.trim())
+        .filter(nome => nome.length > 0)
+        .map(nome => ({ nome }));
+
     const livroDTO = {
         titulo: document.getElementById('livro-titulo').value.trim(),
-        autor: { nome: document.getElementById('livro-autor').value.trim() }, // <-- Alterado para objeto Autor
+        autores: listaAutores,
         preco: parseFloat(document.getElementById('livro-preco').value) || 0.0,
         quantidadeEstoque: parseInt(document.getElementById('livro-estoque').value) || 0,
         tematica: document.getElementById('livro-tematica').value.trim(),
@@ -352,15 +358,15 @@ async function carregarAcervoAdmin() {
             const item = document.createElement('div');
             item.className = 'item-lista-admin';
 
-            const autorNome = obterNomeAutor(livro.autor);
-            const estoqueBaixo = livro.quantidadeEstoque <= (livro.estoqueMinimo || 5);
+            const autorNome = obterNomeAutor(livro);
+            const estoqueBaixo = livro.alertaEstoque || livro.quantidadeEstoque <= (livro.estoqueMinimo || 5);
             const alertaEstoque = estoqueBaixo ? '⚠️ ' : '';
             const classeEstoque = estoqueBaixo ? 'estoque-baixo' : 'estoque-normal';
 
             item.innerHTML = `
                 <div>
                     <strong class="item-titulo-admin">${livro.titulo}</strong><br>
-                    <span class="item-sub-admin">Autor: ${autorNome} | Preço: R$ ${livro.preco.toFixed(2)}</span><br>
+                    <span class="item-sub-admin">Autor(es): ${autorNome} | Preço: R$ ${livro.preco.toFixed(2)}</span><br>
                     <span class="item-estoque-admin ${classeEstoque}">${alertaEstoque}Estoque: ${livro.quantidadeEstoque} unid. (Mín: ${livro.estoqueMinimo || 5})</span>
                 </div>
             `;
@@ -385,7 +391,7 @@ async function atualizarMetricas() {
             const livros = await respostaLivros.json();
             totalLivros = livros.length;
 
-            const livrosBaixoEstoque = livros.filter(livro => livro.quantidadeEstoque <= (livro.estoqueMinimo || 5));
+            const livrosBaixoEstoque = livros.filter(livro => livro.alertaEstoque || livro.quantidadeEstoque <= (livro.estoqueMinimo || 5));
 
             if (livrosBaixoEstoque.length > 0) {
                 textoAlertaEstoque = "\n\n=== ALERTAS DE ESTOQUE (Mínimo Atingido) ===\n";
@@ -426,7 +432,7 @@ async function atualizarMetricas() {
         painel.textContent = `=== RESUMO CONSOLIDADO DA TRÍADE DE PAPEL ===\n\n` +
             `Faturação Total: R$ ${faturamentoTotal.toFixed(2).replace('.', ',')}\n` +
             `Livros Registados: ${totalLivros}\n` +
-            `Vendas Concluídas: ${totalVendas}\n` +
+            `Pedidos Concluídos: ${totalVendas}\n` +
             `Produto Mais Vendido: ${produtoMaisVendido}\n` +
             `Melhor Cliente: ${melhorCliente}` +
             textoAlertaEstoque;
@@ -444,27 +450,29 @@ async function pesquisarFaturas() {
         const resposta = await fetch(url);
 
         if (resposta.ok) {
-            const vendas = await resposta.json();
+            const pedidos = await resposta.json();
 
-            if (!vendas || vendas.length === 0) {
+            if (!pedidos || pedidos.length === 0) {
                 caixaResultado.textContent = "=== RESULTADOS ===\nNenhuma fatura encontrada.";
                 return;
             }
 
-            let textoHTML = `=== ${vendas.length} FATURA(S) ENCONTRADA(S) ===\n\n`;
+            let textoHTML = `=== ${pedidos.length} PEDIDO(S) / FATURA(S) ENCONTRADO(S) ===\n\n`;
 
-            vendas.forEach(v => {
-                const dataFormatada = v.dataVenda ? new Date(v.dataVenda).toLocaleString() : 'Data não registada';
-                const nomeCliente = v.cliente ? v.cliente.nome : 'Cliente Balcão';
-                const docCliente = v.cliente ? v.cliente.cpf : 'N/D';
-                const totalFatura = v.total ? v.total.toFixed(2) : '0.00';
-                const formaPag = v.formaPagamento || 'CARTAO';
+            pedidos.forEach(p => {
+                const idPed = p.idPedido || p.id || 0;
+                const dataFormatada = p.dataVenda ? new Date(p.dataVenda).toLocaleString() : 'Data não registada';
+                const nomeCliente = p.cliente ? p.cliente.nome : 'Cliente Balcão';
+                const docCliente = p.cliente ? p.cliente.cpf : 'N/D';
+                const totalVal = p.valorTotal !== undefined ? p.valorTotal : (p.total || 0);
+                const totalFatura = totalVal.toFixed(2);
+                const formaPag = p.formaPagamento || 'CARTAO';
 
-                textoHTML += `ID Fatura: #${v.id.toString().padStart(5, '0')} | Data: ${dataFormatada}\n`;
+                textoHTML += `Pedido / Fatura: #${idPed.toString().padStart(5, '0')} | Data: ${dataFormatada}\n`;
                 textoHTML += `Cliente: ${nomeCliente} (Doc: ${docCliente})\n`;
 
-                if (v.itens && v.itens.length > 0) {
-                    v.itens.forEach(item => {
+                if (p.itens && p.itens.length > 0) {
+                    p.itens.forEach(item => {
                         const tituloLivro = item.livro ? item.livro.titulo : 'Livro';
                         const qtd = item.quantidade || 1;
                         const precoUnit = item.precoUnitario || 0;
@@ -509,7 +517,8 @@ async function carregarVitrine(listaLivros = null) {
                 const card = document.createElement('div');
                 card.className = 'livro-card';
 
-                const autorNome = obterNomeAutor(livro.autor);
+                const idLivro = livro.idLivro || livro.id;
+                const autorNome = obterNomeAutor(livro);
 
                 card.innerHTML = `
                     <div class="livro-capa-container">
@@ -521,7 +530,7 @@ async function carregarVitrine(listaLivros = null) {
                         <p class="livro-tematica-tag">${livro.tematica || ''}</p>
                         <p class="livro-preco">R$ ${livro.preco.toFixed(2).replace('.', ',')}</p>
                     </div>
-                    <button class="btn-primario" onclick="adicionarAoCarrinho(${livro.id}, '${livro.titulo.replace(/'/g, "\\'")}', ${livro.preco})">
+                    <button class="btn-primario" onclick="adicionarAoCarrinho(${idLivro}, '${livro.titulo.replace(/'/g, "\\'")}', ${livro.preco})">
                         Adicionar ao Carrinho
                     </button>
                 `;
@@ -543,7 +552,7 @@ async function filtrarLivrosLoja() {
         if (resposta.ok) {
             const livros = await resposta.json();
             const livrosFiltrados = livros.filter(livro => {
-                const autorNome = obterNomeAutor(livro.autor).toLowerCase();
+                const autorNome = obterNomeAutor(livro).toLowerCase();
                 return livro.titulo.toLowerCase().includes(termo) || autorNome.includes(termo);
             });
             carregarVitrine(livrosFiltrados);
@@ -589,9 +598,7 @@ async function abrirModalTematicas() {
 
 function fecharModalTematicas() {
     const modal = document.getElementById('modal-tematicas');
-    if (modal) {
-        modal.classList.add('oculto');
-    }
+    if (modal) modal.classList.add('oculto');
 }
 
 async function filtrarPorTematica(tematicaSelecionada) {
@@ -614,7 +621,7 @@ async function filtrarLancamentos() {
         const resposta = await fetch(`${API_BASE_URL}/livros`);
         if (resposta.ok) {
             const livros = await resposta.json();
-            const lancamentos = livros.sort((a, b) => b.id - a.id).slice(0, 6);
+            const lancamentos = livros.sort((a, b) => (b.idLivro || b.id) - (a.idLivro || a.id)).slice(0, 6);
             carregarVitrine(lancamentos);
             document.getElementById('acervo-seccao').scrollIntoView({ behavior: 'smooth' });
         }
@@ -691,23 +698,25 @@ async function abrirVendasRealizadas() {
             throw new Error('Erro ao carregar as vendas do vendedor.');
         }
 
-        const vendas = await response.json();
+        const pedidos = await response.json();
         const containerVendas = document.getElementById('lista-vendas-vendedor');
 
         if (containerVendas) {
-            if (!vendas || vendas.length === 0) {
+            if (!pedidos || pedidos.length === 0) {
                 containerVendas.innerHTML = '<p class="msg-vazia">Nenhuma venda registada até o momento por este vendedor.</p>';
             } else {
-                containerVendas.innerHTML = vendas.map(v => {
-                    const dataFormatada = v.dataVenda ? new Date(v.dataVenda).toLocaleString() : 'Data não registada';
-                    const nomeCliente = v.cliente ? v.cliente.nome : 'Cliente Balcão';
-                    const totalFatura = v.total ? v.total.toFixed(2).replace('.', ',') : '0,00';
-                    const formaPag = v.formaPagamento || 'CARTAO';
+                containerVendas.innerHTML = pedidos.map(p => {
+                    const idPed = p.idPedido || p.id || 0;
+                    const dataFormatada = p.dataVenda ? new Date(p.dataVenda).toLocaleString() : 'Data não registada';
+                    const nomeCliente = p.cliente ? p.cliente.nome : 'Cliente Balcão';
+                    const totalVal = p.valorTotal !== undefined ? p.valorTotal : (p.total || 0);
+                    const totalFatura = totalVal.toFixed(2).replace('.', ',');
+                    const formaPag = p.formaPagamento || 'CARTAO';
 
                     return `
                         <div class="card-fatura-historico" style="margin-bottom: 12px; padding: 12px; border: 1px solid var(--cor-borda); border-radius: 6px; background: #fff;">
                             <div class="fatura-topo-linha" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <strong class="fatura-id-texto">Fatura #${v.id.toString().padStart(5, '0')}</strong>
+                                <strong class="fatura-id-texto">Pedido #${idPed.toString().padStart(5, '0')}</strong>
                                 <span class="fatura-data-texto" style="color: #666; font-size: 0.8rem;">Data: ${dataFormatada}</span>
                             </div>
                             <div class="fatura-corpo-linha" style="display: flex; justify-content: space-between; align-items: center;">
@@ -727,9 +736,7 @@ async function abrirVendasRealizadas() {
 
         ocultarTodosPainels();
         const painelVendas = document.getElementById('app-vendedor-vendas');
-        if (painelVendas) {
-            painelVendas.classList.remove('oculto');
-        }
+        if (painelVendas) painelVendas.classList.remove('oculto');
 
     } catch (error) {
         console.error("Erro ao carregar vendas do vendedor:", error);
@@ -743,15 +750,17 @@ async function abrirVendasRealizadas() {
 async function realizarCadastroVendedor(event) {
     event.preventDefault();
 
+    const tel = document.getElementById('vend-telefone').value.trim();
+
     const vendedorDTO = {
         cpf: document.getElementById('vend-cpf').value.trim(),
         nome: document.getElementById('vend-nome').value.trim(),
         matricula: document.getElementById('vend-matricula').value.trim(),
         email: document.getElementById('vend-email').value.trim(),
+        senha: document.getElementById('vend-senha') ? document.getElementById('vend-senha').value.trim() : '123456',
         dataEntrada: document.getElementById('vend-data').value,
-        tempoServico: parseInt(document.getElementById('vend-tempo').value) || 1,
         salario: parseFloat(document.getElementById('vend-salario').value) || 0.0,
-        telefone: document.getElementById('vend-telefone').value.trim()
+        telefones: tel ? [tel] : []
     };
 
     try {
@@ -775,32 +784,37 @@ async function realizarCadastroVendedor(event) {
 }
 
 // ==========================================
-// CADASTRO DE CLIENTES (CRIAR CONTA)
+// CADASTRO DE CLIENTES (CRIAR CONTA + INDICAÇÃO)
 // ==========================================
 function abrirModalCadastroCliente() {
     const modal = document.getElementById('modal-cadastro-cliente');
-    if (modal) {
-        modal.classList.remove('oculto');
-    }
+    if (modal) modal.classList.remove('oculto');
 }
 
 function fecharModalCadastroCliente() {
     const modal = document.getElementById('modal-cadastro-cliente');
-    if (modal) {
-        modal.classList.add('oculto');
-    }
+    if (modal) modal.classList.add('oculto');
 }
 
 async function realizarCadastroCliente(event) {
     event.preventDefault();
 
+    const tel = document.getElementById('cad-telefone').value.trim();
+
     const clienteDTO = {
         nome: document.getElementById('cad-nome').value.trim(),
         cpf: document.getElementById('cad-cpf').value.trim(),
-        telefone: document.getElementById('cad-telefone').value.trim(),
+        telefones: tel ? [tel] : [],
         email: document.getElementById('cad-email').value.trim(),
+        senha: document.getElementById('cad-senha').value.trim(),
         sexo: document.getElementById('cad-sexo').value,
-        uf: document.getElementById('cad-uf').value
+        rua: document.getElementById('cad-rua').value.trim(),
+        numero: document.getElementById('cad-numero').value.trim(),
+        bairro: document.getElementById('cad-bairro').value.trim(),
+        cidade: document.getElementById('cad-cidade').value.trim(),
+        uf: document.getElementById('cad-uf').value.trim().toUpperCase(),
+        cep: document.getElementById('cad-cep').value.trim(),
+        cpfIndicador: document.getElementById('cad-cpf-indicador').value.trim()
     };
 
     try {
@@ -825,31 +839,42 @@ async function realizarCadastroCliente(event) {
 }
 
 // ==========================================
-// ÁREA DO CLIENTE (LOGIN E HISTÓRICO)
+// ÁREA DO CLIENTE (LOGIN, PERFIL, INDICAÇÕES E HISTÓRICO)
 // ==========================================
 async function entrarAreaCliente() {
-    const cpfInput = document.getElementById('login-cliente-doc').value.trim();
-    const cpf = cpfInput.replace(/\D/g, '');
+    const identificador = document.getElementById('login-cliente-doc').value.trim();
+    const senhaInput = document.getElementById('login-cliente-senha');
+    const senha = senhaInput ? senhaInput.value.trim() : '';
 
-    if (!cpf) {
-        alert("Por favor, insira o seu CPF.");
+    if (!identificador || !senha) {
+        alert("Por favor, insira o seu CPF/e-mail e a palavra-passe.");
         return;
     }
 
     try {
-        const resposta = await fetch(`${API_BASE_URL}/vendas/cliente/${encodeURIComponent(cpf)}`);
+        const resposta = await fetch(`${API_BASE_URL}/auth/login-cliente`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ identificador, senha })
+        });
 
-        if (resposta.ok) {
-            const vendas = await resposta.json();
+        const dados = await resposta.json();
 
-            localStorage.setItem('clienteLogadoCPF', cpf);
-            if (vendas.length > 0 && vendas[0].cliente) {
-                localStorage.setItem('clienteLogadoNome', vendas[0].cliente.nome);
-                localStorage.setItem('clienteLogadoEmail', vendas[0].cliente.email || 'Não registado');
-                localStorage.setItem('clienteLogadoTelefone', vendas[0].cliente.telefone || 'Não registado');
-            } else {
-                localStorage.setItem('clienteLogadoNome', 'Cliente Tríade');
-            }
+        if (resposta.ok && dados.sucesso && dados.cliente) {
+            const cli = dados.cliente;
+            localStorage.setItem('clienteLogadoId', cli.idPessoa);
+            localStorage.setItem('clienteLogadoCPF', cli.cpf);
+            localStorage.setItem('clienteLogadoNome', cli.nome);
+            localStorage.setItem('clienteLogadoEmail', cli.email || 'Não registado');
+            localStorage.setItem('clienteLogadoTelefone', (cli.telefones && cli.telefones.length > 0) ? cli.telefones.join(', ') : 'Não registado');
+            localStorage.setItem('clienteLogadoEndereco', JSON.stringify({
+                rua: cli.rua || '',
+                numero: cli.numero || '',
+                bairro: cli.bairro || '',
+                cidade: cli.cidade || '',
+                uf: cli.uf || 'PE',
+                cep: cli.cep || '55150-000'
+            }));
 
             document.getElementById('cliente-login-screen').classList.add('oculto');
             document.getElementById('loja-sistema').classList.remove('oculto');
@@ -857,10 +882,9 @@ async function entrarAreaCliente() {
             verificarEstadoSessao();
             carregarVitrine();
 
-            alert("Login efetuado com sucesso! Já pode adicionar livros ao carrinho e realizar compras.");
-
+            alert(dados.mensagem || "Login efetuado com sucesso!");
         } else {
-            alert("Não foi possível localizar o cadastro para este CPF. Verifique se está correto ou crie uma conta.");
+            alert(dados.mensagem || "CPF/E-mail ou palavra-passe incorretos.");
         }
     } catch (e) {
         console.error("Erro ao validar cliente:", e);
@@ -868,9 +892,6 @@ async function entrarAreaCliente() {
     }
 }
 
-// ==========================================
-// BOTÕES DO MENU SUPERIOR DIREITO (PERFIL E MINHAS COMPRAS)
-// ==========================================
 function abrirModalPerfil() {
     const modal = document.getElementById('modal-perfil');
     const detalhes = document.getElementById('perfil-detalhes');
@@ -882,19 +903,78 @@ function abrirModalPerfil() {
     const telefone = localStorage.getItem('clienteLogadoTelefone') || 'N/D';
 
     detalhes.innerHTML = `
-        <p><strong>Nome:</strong> ${nome}</p>
-        <p><strong>CPF / Documento:</strong> ${cpf}</p>
-        <p><strong>E-mail:</strong> ${email}</p>
-        <p><strong>Telefone:</strong> ${telefone}</p>
+        <p style="margin: 0.25rem 0;"><strong>Nome:</strong> ${nome}</p>
+        <p style="margin: 0.25rem 0;"><strong>CPF:</strong> ${cpf}</p>
+        <p style="margin: 0.25rem 0;"><strong>E-mail:</strong> ${email}</p>
+        <p style="margin: 0.25rem 0;"><strong>Telefone(s):</strong> ${telefone}</p>
     `;
 
+    carregarClientesIndicados();
     modal.classList.remove('oculto');
 }
 
 function fecharModalPerfil() {
     const modal = document.getElementById('modal-perfil');
-    if (modal) {
-        modal.classList.add('oculto');
+    if (modal) modal.classList.add('oculto');
+}
+
+async function registrarIndicacaoCliente(event) {
+    event.preventDefault();
+
+    const idIndicador = localStorage.getItem('clienteLogadoId');
+    if (!idIndicador) {
+        alert("Sessão inválida. Faça login novamente como cliente.");
+        return;
+    }
+
+    const inputCpf = document.getElementById('input-cpf-indicado');
+    const cpfIndicado = inputCpf ? inputCpf.value.trim() : '';
+
+    if (!cpfIndicado) {
+        alert("Informe o CPF do amigo que deseja indicar.");
+        return;
+    }
+
+    try {
+        const resposta = await fetch(`${API_BASE_URL}/clientes/${idIndicador}/indicar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cpfIndicado })
+        });
+
+        const dados = await resposta.json();
+        if (resposta.ok && dados.sucesso) {
+            alert("🎉 " + dados.mensagem);
+            if (inputCpf) inputCpf.value = '';
+            carregarClientesIndicados();
+        } else {
+            alert(dados.mensagem || "Não foi possível registrar a indicação.");
+        }
+    } catch (e) {
+        console.error("Erro ao registrar indicação:", e);
+        alert("Erro de conexão ao registrar indicação.");
+    }
+}
+
+async function carregarClientesIndicados() {
+    const listaEl = document.getElementById('lista-clientes-indicados');
+    const idIndicador = localStorage.getItem('clienteLogadoId');
+    if (!listaEl || !idIndicador) return;
+
+    try {
+        const resposta = await fetch(`${API_BASE_URL}/clientes/${idIndicador}/indicados`);
+        if (resposta.ok) {
+            const indicados = await resposta.json();
+            if (!indicados || indicados.length === 0) {
+                listaEl.innerHTML = '<li>Você ainda não indicou nenhum cliente.</li>';
+            } else {
+                listaEl.innerHTML = indicados
+                    .map(ind => `<li><strong>${ind.nome}</strong> (CPF: ${ind.cpf})</li>`)
+                    .join('');
+            }
+        }
+    } catch (e) {
+        listaEl.innerHTML = '<li>Erro ao carregar lista de indicados.</li>';
     }
 }
 
@@ -914,33 +994,35 @@ async function abrirMinhasCompras() {
     try {
         const resposta = await fetch(`${API_BASE_URL}/vendas/cliente/${encodeURIComponent(cpfLogado)}`);
         if (resposta.ok) {
-            const vendas = await resposta.json();
-            exibirHistoricoCliente(vendas);
+            const pedidos = await resposta.json();
+            exibirHistoricoCliente(pedidos);
         }
     } catch (e) {
         console.error("Erro ao carregar compras:", e);
     }
 }
 
-function exibirHistoricoCliente(vendas) {
+function exibirHistoricoCliente(pedidos) {
     const container = document.getElementById('lista-faturas-cliente');
     if (!container) return;
 
     container.innerHTML = '';
 
-    if (!vendas || vendas.length === 0) {
+    if (!pedidos || pedidos.length === 0) {
         container.innerHTML = '<p class="msg-vazia-centro">Ainda não possui compras registadas na sua conta.</p>';
         return;
     }
 
-    vendas.forEach(v => {
-        const dataFormatada = v.dataVenda ? new Date(v.dataVenda).toLocaleString() : 'Data não registada';
-        const totalFatura = v.total ? v.total.toFixed(2).replace('.', ',') : '0,00';
-        const formaPag = v.formaPagamento || 'CARTAO';
+    pedidos.forEach(p => {
+        const idPed = p.idPedido || p.id || 0;
+        const dataFormatada = p.dataVenda ? new Date(p.dataVenda).toLocaleString() : 'Data não registada';
+        const totalVal = p.valorTotal !== undefined ? p.valorTotal : (p.total || 0);
+        const totalFatura = totalVal.toFixed(2).replace('.', ',');
+        const formaPag = p.formaPagamento || 'CARTAO';
 
         let itensHtml = '';
-        if (v.itens && v.itens.length > 0) {
-            v.itens.forEach(item => {
+        if (p.itens && p.itens.length > 0) {
+            p.itens.forEach(item => {
                 const tituloLivro = item.livro ? item.livro.titulo : 'Livro';
                 const qtd = item.quantidade || 1;
                 const precoUnit = item.precoUnitario || 0;
@@ -955,7 +1037,7 @@ function exibirHistoricoCliente(vendas) {
 
         cardFatura.innerHTML = `
             <div class="fatura-topo-linha">
-                <span class="fatura-id-texto">Fatura #${v.id.toString().padStart(5, '0')}</span>
+                <span class="fatura-id-texto">Pedido #${idPed.toString().padStart(5, '0')}</span>
                 <span class="fatura-data-texto">Data: ${dataFormatada}</span>
             </div>
             <div class="fatura-corpo-linha">
@@ -1117,11 +1199,11 @@ function abrirCheckoutDetalhado() {
     const cpfClienteLogado = localStorage.getItem('clienteLogadoCPF');
     const nomeClienteLogado = localStorage.getItem('clienteLogadoNome');
     const vendedorCpf = localStorage.getItem('vendedorLogadoCPF');
+    const endSalvo = JSON.parse(localStorage.getItem('clienteLogadoEndereco') || '{}');
 
     let cpfInicial = cpfClienteLogado || '';
     let nomeInicial = (nomeClienteLogado && nomeClienteLogado !== 'Cliente Tríade') ? nomeClienteLogado : '';
 
-    // Se for atendimento de balcão feito por um vendedor, captura o CPF digitado no carrinho
     if (vendedorCpf && !cpfClienteLogado) {
         const inputBalcao = document.getElementById('checkout-cliente-cpf');
         const cpfBalcao = inputBalcao ? inputBalcao.value.trim() : '';
@@ -1141,7 +1223,6 @@ function abrirCheckoutDetalhado() {
         return;
     }
 
-    // Valida o cartão antes de avançar, caso seja a forma escolhida
     const metodoPagamentoInput = document.querySelector('input[name="pagamento"]:checked');
     const formaPagamento = metodoPagamentoInput ? metodoPagamentoInput.value : 'CARTAO';
     const numeroCartao = document.getElementById('checkout-cartao') ? document.getElementById('checkout-cartao').value.trim() : '';
@@ -1151,12 +1232,17 @@ function abrirCheckoutDetalhado() {
         return;
     }
 
-    // Preenche os campos do formulário de checkout
     document.getElementById('checkout-final-cpf').value = cpfInicial;
     document.getElementById('checkout-final-nome').value = nomeInicial;
-    document.getElementById('checkout-final-endereco').value = '';
+    document.getElementById('checkout-final-rua').value = endSalvo.rua || '';
+    document.getElementById('checkout-final-numero').value = endSalvo.numero || '';
+    document.getElementById('checkout-final-bairro').value = endSalvo.bairro || '';
+    document.getElementById('checkout-final-cidade').value = endSalvo.cidade || '';
+    document.getElementById('checkout-final-uf').value = endSalvo.uf || 'PE';
+    if (document.getElementById('checkout-final-cep')) {
+        document.getElementById('checkout-final-cep').value = endSalvo.cep || '55150-000';
+    }
 
-    // Exibe os dados do vendedor se houver um logado
     const blocoVendedor = document.getElementById('bloco-info-vendedor');
     const spanVendedor = document.getElementById('checkout-vendedor-exibicao');
     if (vendedorCpf && blocoVendedor && spanVendedor) {
@@ -1166,11 +1252,9 @@ function abrirCheckoutDetalhado() {
         blocoVendedor.classList.add('oculto');
     }
 
-    // Atualiza o valor total no resumo
     const totalCalculado = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
     document.getElementById('checkout-final-total').textContent = `R$ ${totalCalculado.toFixed(2).replace('.', ',')}`;
 
-    // Fecha o drawer lateral do carrinho e abre a tela de checkout
     toggleCarrinho();
     document.getElementById('modal-checkout-detalhado').classList.remove('oculto');
 }
@@ -1188,13 +1272,21 @@ async function confirmarCompraFinal(event) {
 
     const cpfClienteFinal = document.getElementById('checkout-final-cpf').value.trim();
     const nomeClienteFinal = document.getElementById('checkout-final-nome').value.trim();
-    const enderecoFinal = document.getElementById('checkout-final-endereco').value.trim();
+    const rua = document.getElementById('checkout-final-rua').value.trim();
+    const numero = document.getElementById('checkout-final-numero').value.trim();
+    const bairro = document.getElementById('checkout-final-bairro').value.trim();
+    const cidade = document.getElementById('checkout-final-cidade').value.trim();
+    const uf = document.getElementById('checkout-final-uf').value.trim().toUpperCase();
+    const cepEl = document.getElementById('checkout-final-cep');
+    const cep = cepEl ? cepEl.value.trim() : '55150-000';
     const vendedorCpf = localStorage.getItem('vendedorLogadoCPF') || null;
 
-    if (!cpfClienteFinal || !nomeClienteFinal || !enderecoFinal) {
-        alert("Por favor, preencha todos os campos obrigatórios (CPF, Nome e Endereço).");
+    if (!cpfClienteFinal || !nomeClienteFinal || !rua || !numero || !bairro || !cidade || !uf) {
+        alert("Por favor, preencha todos os campos obrigatórios de identificação e endereço.");
         return;
     }
+
+    const enderecoFinal = `${rua}, nº ${numero} - ${bairro}, ${cidade} - ${uf} (${cep})`;
 
     const metodoPagamentoInput = document.querySelector('input[name="pagamento"]:checked');
     const formaPagamento = metodoPagamentoInput ? metodoPagamentoInput.value : 'CARTAO';
@@ -1208,8 +1300,13 @@ async function confirmarCompraFinal(event) {
     const pedidoDTO = {
         cpfCliente: cpfClienteFinal,
         nomeCliente: nomeClienteFinal,
-        enderecoCliente: enderecoFinal,
-        vendedorCpf: vendedorCpf,
+        ruaCliente: rua,
+        numeroCliente: numero,
+        bairroCliente: bairro,
+        cidadeCliente: cidade,
+        ufCliente: uf,
+        cepCliente: cep,
+        vendedorIdentificador: vendedorCpf,
         formaPagamento: formaPagamento,
         numeroCartao: numeroCartao,
         itens: itensDTO
@@ -1229,16 +1326,13 @@ async function confirmarCompraFinal(event) {
         });
 
         if (resposta.ok) {
-            const vendaCriada = await resposta.json();
-
-            // Guarda o endereço localmente para exibir na fatura caso o backend não retorne o campo
-            vendaCriada.enderecoEntrega = enderecoFinal;
+            const pedidoCriado = await resposta.json();
+            pedidoCriado.enderecoEntrega = enderecoFinal;
 
             carrinho = [];
             atualizarInterfaceCarrinho();
             fecharCheckoutDetalhado();
-            exibirModalFatura(vendaCriada);
-
+            exibirModalFatura(pedidoCriado);
         } else {
             const erroTexto = await resposta.text();
             alert("Erro ao finalizar compra: " + (erroTexto || "Verifique os dados e o stock dos livros."));
@@ -1254,20 +1348,22 @@ async function confirmarCompraFinal(event) {
     }
 }
 
-function exibirModalFatura(venda) {
+function exibirModalFatura(pedido) {
     const modal = document.getElementById('modal-fatura');
     const corpoFatura = document.getElementById('fatura-body');
     if (!modal || !corpoFatura) return;
 
-    const dataFormatada = venda.dataVenda ? new Date(venda.dataVenda).toLocaleString() : new Date().toLocaleString();
-    const nomeCliente = venda.cliente ? venda.cliente.nome : 'Cliente Tríade';
-    const docCliente = venda.cliente ? venda.cliente.cpf : 'N/D';
-    const totalGeral = venda.total ? venda.total.toFixed(2).replace('.', ',') : '0,00';
-    const formaPag = venda.formaPagamento || 'CARTAO';
+    const idPed = pedido.idPedido || pedido.id || 0;
+    const dataFormatada = pedido.dataVenda ? new Date(pedido.dataVenda).toLocaleString() : new Date().toLocaleString();
+    const nomeCliente = pedido.cliente ? pedido.cliente.nome : 'Cliente Tríade';
+    const docCliente = pedido.cliente ? pedido.cliente.cpf : 'N/D';
+    const totalVal = pedido.valorTotal !== undefined ? pedido.valorTotal : (pedido.total || 0);
+    const totalGeral = totalVal.toFixed(2).replace('.', ',');
+    const formaPag = pedido.formaPagamento || 'CARTAO';
 
     let itensHtml = '';
-    if (venda.itens && venda.itens.length > 0) {
-        venda.itens.forEach(item => {
+    if (pedido.itens && pedido.itens.length > 0) {
+        pedido.itens.forEach(item => {
             const tituloLivro = item.livro ? item.livro.titulo : 'Livro';
             const qtd = item.quantidade || 1;
             const precoUnit = item.precoUnitario || 0;
@@ -1277,10 +1373,7 @@ function exibirModalFatura(venda) {
 
     let blocoExtraPagamento = '';
     if (formaPag === 'PIX') {
-        // Payload do PIX Copia e Cola (pode usar o padrão ou o gerado pelo backend)
         const payloadPix = "00020126580514BR.GOV.BCB.PIX...triadepapel";
-
-        // URL da API gratuita que gera a imagem do QR Code instantaneamente
         const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(payloadPix)}`;
 
         blocoExtraPagamento = `
@@ -1294,10 +1387,10 @@ function exibirModalFatura(venda) {
 
     corpoFatura.innerHTML = `
         <div class="fatura-modal-conteudo">
-            <p><strong>Fatura ID:</strong> #${venda.id.toString().padStart(5, '0')}</p>
+            <p><strong>Pedido / Fatura ID:</strong> #${idPed.toString().padStart(5, '0')}</p>
             <p><strong>Data:</strong> ${dataFormatada}</p>
             <p><strong>Cliente:</strong> ${nomeCliente} (CPF: ${docCliente})</p>
-            <p><strong>Endereço:</strong> ${venda.enderecoEntrega || 'Retirada em Loja'}</p>
+            <p><strong>Endereço:</strong> ${pedido.enderecoEntrega || 'Retirada em Loja'}</p>
             <hr class="fatura-divisor">
             <p><strong>Itens Adquiridos:</strong></p>
             <ul class="fatura-lista-itens">${itensHtml}</ul>
@@ -1312,8 +1405,6 @@ function exibirModalFatura(venda) {
 
 function fecharFatura() {
     const modal = document.getElementById('modal-fatura');
-    if (modal) {
-        modal.classList.add('oculto');
-    }
+    if (modal) modal.classList.add('oculto');
     carregarVitrine();
 }

@@ -8,17 +8,15 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "usuario")
-@PrimaryKeyJoinColumn(name = "cpf") // <--- Garante a ligação de herança com a tabela pessoa via CPF
+@Table(name = "administrador")
+@PrimaryKeyJoinColumn(name = "id_pessoa")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Usuario extends Pessoa {
+public class Administrador extends Pessoa {
 
-    @Column(nullable = false)
-    private String senha;
-
-    private String perfil; // Ex: "ADMIN"
+    @Column(nullable = false, length = 50)
+    private String perfil = "ADMIN";
 }

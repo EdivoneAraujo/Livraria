@@ -6,8 +6,12 @@ import com.livraria.Repository.AutorRepository;
 import com.livraria.Repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class LivroService {
@@ -26,24 +30,29 @@ public class LivroService {
         return livroRepository.findById(id);
     }
 
+    @Transactional
     public Livro guardar(Livro livro) {
-        if (livro.getAutor() == null) {
-            throw new IllegalArgumentException("O autor do livro é obrigatório.");
+        if (livro.getAutores() == null || livro.getAutores().isEmpty()) {
+            throw new IllegalArgumentException("O livro deve possuir pelo menos um autor.");
         }
 
-        if (livro.getAutor().getId() != null) {
-            Autor autorExistente = autorRepository.findById(livro.getAutor().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Autor não encontrado (ID: " + livro.getAutor().getId() + ")."));
-            livro.setAutor(autorExistente);
-        } else if (livro.getAutor().getNome() != null && !livro.getAutor().getNome().isBlank()) {
-            String nomeAutor = livro.getAutor().getNome().trim();
-            Autor autor = autorRepository.findByNomeIgnoreCase(nomeAutor)
-                    .orElseGet(() -> autorRepository.save(new Autor(nomeAutor)));
-            livro.setAutor(autor);
-        } else {
-            throw new IllegalArgumentException("Informe o ID ou o nome do autor.");
+        Set<Autor> autoresResolvidos = new HashSet<>();
+        for (Autor autorRecebido : livro.getAutores()) {
+            if (autorRecebido.getIdAutor() != null) {
+                Autor autorExistente = autorRepository.findById(autorRecebido.getIdAutor())
+                        .orElseThrow(() -> new IllegalArgumentException("Autor não encontrado (ID: " + autorRecebido.getIdAutor() + ")."));
+                autoresResolvidos.add(autorExistente);
+            } else if (autorRecebido.getNome() != null && !autorRecebido.getNome().isBlank()) {
+                String nomeAutor = autorRecebido.getNome().trim();
+                Autor autor = autorRepository.findByNomeIgnoreCase(nomeAutor)
+                        .orElseGet(() -> autorRepository.save(new Autor(nomeAutor)));
+                autoresResolvidos.add(autor);
+            } else {
+                throw new IllegalArgumentException("Informe o ID ou o nome do autor.");
+            }
         }
 
+        livro.setAutores(autoresResolvidos);
         return livroRepository.save(livro);
     }
 

@@ -7,9 +7,9 @@
 /* 2. VARIÁVEIS GLOBAIS (ROOT)                                */
 /* ========================================================== */
 :root {
-    --cor-primaria: #2c2825;
-    --cor-destaque: #8c6239;
-    --cor-fundo: #fdfbf7;
+    --cor-primaria: #2c2825;   /* Café */
+    --cor-destaque: #8c6239;   /* Marrom caramelo */
+    --cor-fundo: #fdfbf7;  /* Bege claro */
     --cor-borda: #e5ded0;
     --sombra-suave: 0 0.2rem 0.8rem rgba(0,0,0,0.06);
 }
@@ -132,7 +132,7 @@ nav.menu-principal a:hover {
     align-items: center;
 }
 
-.usuario-logado-texto {
+.administrador-logado-texto {
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--cor-primaria);
@@ -224,7 +224,7 @@ body.cart-open .hero-banner {
 
 .hero-banner h1 {
     font-family: 'Great Vibes', cursive;
-    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    font-size: clamp(2rem, 4.5vw, 4.5rem);
     margin: 0.2rem 0;
     font-weight: 700;
     line-height: 1.1;
@@ -546,7 +546,7 @@ body.cart-open .carrinho-drawer {
 .btn-fechar-drawer {
     background: none;
     border: none;
-    color: #fff;
+    color: #8c6239;
     font-size: 1rem;
     cursor: pointer;
 }
@@ -715,7 +715,7 @@ body.cart-open .carrinho-drawer {
 
 .texto-cursivo-destaque {
     font-family: 'Great Vibes', cursive;
-    font-size: 1.35rem;
+    font-size: 2.5rem;
     color: var(--cor-destaque);
     display: block;
     margin: 1rem 0;
@@ -773,14 +773,6 @@ body.cart-open .carrinho-drawer {
 .membro-github:hover {
     color: #734e2c;
     text-decoration: underline;
-}
-
-/* Responsivo para telemóveis */
-@media (max-width: 768px) {
-    .equipe-grid {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
-    }
 }
 
 .form-group { margin-bottom: 2%; text-align: left; }
@@ -1133,6 +1125,30 @@ body.cart-open .carrinho-drawer {
     background-color: #5a6268 !important;
 }
 
+.checkout-grid-rua-numero {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 0.6rem;
+}
+
+.checkout-grid-bairro-cidade-uf {
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 0.7fr;
+    gap: 0.6rem;
+}
+
+.input-uf-maiusculo {
+    text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+    .checkout-grid-rua-numero,
+    .checkout-grid-bairro-cidade-uf {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
 /* ========================================== */
 /* 10. MEDIA QUERIES (DISPOSITIVOS MÓVEIS)    */
 /* ========================================== */
@@ -1144,6 +1160,13 @@ body.cart-open .carrinho-drawer {
     .vitrine-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
+/* Responsivo para telemóveis */
+@media (max-width: 768px) {
+    .equipe-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+}
 @media (max-width: 768px) {
     body.cart-open {
         margin-right: 0 !important;

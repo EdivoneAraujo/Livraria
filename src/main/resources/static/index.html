@@ -34,7 +34,7 @@
             <a href="#" id="nav-livros" class="ativo" onclick="mostrarAba('livros', event)">Acervo</a>
             <a href="#" id="nav-faturas" onclick="mostrarAba('faturas', event)">Faturas</a>
             <a href="#" id="nav-relatorios" onclick="mostrarAba('relatorios', event)">Relatórios & Métricas</a>
-            <a href="#" id="nav-funcionario" onclick="mostrarAba('funcionario', event)">Registar Funcionário</a>
+            <a href="#" id="nav-funcionario" onclick="mostrarAba('funcionario', event)">Registrar Funcionário</a>
         </div>
 
         <!-- Menu: Área do Cliente -->
@@ -57,7 +57,7 @@
 
         <!-- MENU CLIENTE LOGADO -->
         <div id="menu-cliente-logado" class="menu-auth-wrapper oculto">
-            <span class="usuario-logado-texto" id="nome-cliente-topo">Olá, Utilizador</span>
+            <span class="administrador-logado-texto" id="nome-cliente-topo">Olá, Utilizador</span>
             <button class="btn-login-topo" onclick="abrirModalPerfil()">Perfil</button>
             <button class="btn-login-topo" onclick="abrirMinhasCompras()">Minhas Compras</button>
             <button class="btn-conta-topo btn-sair-perfil" onclick="logoutGeral()">Sair</button>
@@ -65,7 +65,7 @@
 
         <!-- MENU VENDEDOR LOGADO -->
         <div id="menu-vendedor-logado" class="menu-auth-wrapper oculto">
-            <span class="usuario-logado-texto" id="nome-vendedor-topo">Vendedor</span>
+            <span class="administrador-logado-texto" id="nome-vendedor-topo">Vendedor</span>
             <button class="btn-login-topo" onclick="abrirModalPerfilVendedor()">Perfil</button>
             <button class="btn-login-topo" onclick="abrirVendasRealizadas()">Vendas Realizadas</button>
             <button class="btn-conta-topo btn-sair-perfil" onclick="logoutGeral()">Sair</button>
@@ -73,7 +73,7 @@
 
         <!-- MENU ADMIN LOGADO -->
         <div id="menu-admin-logado" class="menu-auth-wrapper oculto">
-            <span class="usuario-logado-texto" id="nome-admin-topo">👤 Administrador</span>
+            <span class="administrador-logado-texto" id="nome-admin-topo">👤 Administrador</span>
             <button class="btn-conta-topo btn-sair-perfil" onclick="realizarLogout()">Sair</button>
         </div>
 
@@ -90,8 +90,9 @@
 <div id="loja-sistema">
     <!-- HERO BANNER -->
     <section class="hero-banner">
-        <h1>Livraria Tríade de Papel</h1>
-        <p>Explore as nossas edições clássicas e contemporâneas disponíveis no acervo literário e digital.</p>
+        <h1>Livraria</h1>
+        <h1>Tríade de Papel</h1>
+        <p>Explore as Livraria nossas edições clássicas e contemporâneas disponíveis no acervo literário e digital</p>
         <div class="hero-botoes">
             <button class="btn-hero-primary" onclick="document.getElementById('acervo-seccao').scrollIntoView({behavior: 'smooth'})">Explorar Acervo</button>
             <button class="btn-hero-secondary" onclick="abrirTelaEscolhaLogin()">Portal de Acesso</button>
@@ -221,7 +222,7 @@
             <div class="card-painel card-full-width">
                 <h3 class="admin-card-titulo">Relatório Consolidado e Alertas de Stock</h3>
                 <div class="terminal-box dark" id="texto-relatorio">
-                    A carregar métricas do sistema...
+                    Carregando as métricas do sistema...
                 </div>
             </div>
         </div>
@@ -230,12 +231,12 @@
         <div id="funcionario" class="aba-conteudo oculto">
             <div class="card-painel card-centralizado-medio">
                 <h3 class="admin-card-titulo">Registrar Novo Funcionário (Vendedor)</h3>
-                <p class="admin-sub-texto">Preencha os dados alinhados ao minimundo de herança da classe <code>Pessoa</code> &rarr; <code>Vendedor</code>.</p>
+                <p class="admin-sub-texto"></p>
                 <form id="form-cad-vendedor" onsubmit="realizarCadastroVendedor(event)">
                     <div class="form-group"><label>CPF (Chave Primária / Pessoa)</label><input type="text" id="vend-cpf" required placeholder="000.000.000-00"></div>
                     <div class="form-group"><label>Nome Completo</label><input type="text" id="vend-nome" required placeholder="Nome do funcionário"></div>
                     <div class="form-group"><label>Matrícula</label><input type="text" id="vend-matricula" required placeholder="Ex: VEND003"></div>
-                    <div class="form-group"><label>E-mail</label><input type="email" id="vend-email" required placeholder="vendedor@triadepapel.com"></div>
+                    <div class="form-group"><label>E-mail</label><input type="email" id="vend-email" required placeholder="vendedor@livraria.com"></div>
                     <div class="form-group"><label>Data de Entrada</label><input type="date" id="vend-data" required></div>
                     <div class="form-group"><label>Tempo de Serviço (anos)</label><input type="number" id="vend-tempo" required value="1"></div>
                     <div class="form-group"><label>Salário (R$)</label><input type="number" step="0.01" id="vend-salario" required placeholder="1800.00"></div>
@@ -260,9 +261,9 @@
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- SECÇÃO DE VENDAS DO VENDEDOR (CORRIGIDA)   -->
-<!-- ========================================== -->
+<!-- ============================= -->
+<!-- SECÇÃO DE VENDAS DO VENDEDOR  -->
+<!-- ============================= -->
 <div id="app-vendedor-vendas" class="admin-container oculto" style="padding: 2rem;">
     <div class="admin-conteudo-largura">
         <h3 class="admin-card-titulo">Histórico de Vendas Realizadas</h3>
@@ -280,7 +281,7 @@
 <div id="tela-escolha-login" class="modal-overlay oculto">
     <div class="modal-box modal-acesso-box">
         <h3 class="modal-titulo-destaque">Portal de Acesso</h3>
-        <p class="modal-subtitulo">Selecione como deseja aceder à plataforma:</p>
+        <p class="modal-subtitulo">Selecione como deseja acessar à plataforma:</p>
 
         <div class="acoes-perfil-coluna">
             <button class="btn-primario" onclick="escolherPerfil('loja')">Entrar na Loja (Vitrine)</button>
@@ -296,10 +297,14 @@
 <div id="cliente-login-screen" class="login-wrapper oculto">
     <div class="login-box">
         <h3 class="modal-titulo-destaque">Área do Cliente</h3>
-        <p class="modal-subtitulo">Insira o seu CPF para aceder à sua conta e histórico de compras.</p>
+        <p class="modal-subtitulo">Insira o seu CPF ou e-mail e palavra-passe para aceder à sua conta.</p>
         <div class="form-group">
-            <label for="login-cliente-doc">CPF ou Documento</label>
-            <input type="text" id="login-cliente-doc" placeholder="Ex: 12345678900">
+            <label for="login-cliente-doc">CPF ou E-mail</label>
+            <input type="text" id="login-cliente-doc" placeholder="Ex: 12345678900 ou nome@email.com">
+        </div>
+        <div class="form-group">
+            <label for="login-cliente-senha">Palavra-passe</label>
+            <input type="password" id="login-cliente-senha" placeholder="••••••••">
         </div>
         <button type="button" class="btn-primario" onclick="entrarAreaCliente()">Entrar</button>
         <button type="button" class="btn-cancelar" onclick="voltarParaLoja(event)">Voltar à Loja</button>
@@ -349,8 +354,8 @@
             <button class="btn-fechar-drawer btn-fechar-escuro" onclick="fecharModalSobre()" aria-label="Fechar modal">✕</button>
         </div>
         <div class="sobre-conteudo">
-            <p>A Livraria Tríade de Papel é um projeto acadêmico e comercial dedicado à valorização da literatura clássica e contemporânea, unindo tecnologia web moderna e gestão eficiente de acervo.</p>
-            <span class="texto-cursivo-destaque">"A leitura abre portas para novos mundos."</span>
+            <p>A Livraria Tríade de Papel é um projeto acadêmico e comercial dedicado à valorização da literatura clássica e contemporânea, unindo tecnologia web moderna e gestão eficiente de acervo</p>
+            <span class="texto-cursivo-destaque">"A leitura abre portas para novos mundos"</span>
 
             <!-- Equipa de Desenvolvimento -->
             <div class="equipe-grid" style="margin-top: 1.2rem;">
@@ -388,15 +393,34 @@
 </div>
 
 <div id="modal-cadastro-cliente" class="modal-overlay oculto">
-    <div class="modal-box modal-cadastro-box">
-        <h3>Criar Conta de Cliente</h3>
+    <div class="modal-box modal-cadastro-box" style="text-align: left;">
+        <h3 style="text-align: center;">Criar Conta de Cliente</h3>
         <form id="form-cad-cliente" onsubmit="realizarCadastroCliente(event)">
-            <div class="form-group"><label>Nome Completo</label><input type="text" id="cad-nome" required></div>
-            <div class="form-group"><label>CPF / Documento</label><input type="text" id="cad-cpf" required></div>
-            <div class="form-group"><label>Telefone</label><input type="text" id="cad-telefone" required></div>
-            <div class="form-group"><label>E-mail</label><input type="email" id="cad-email" required></div>
-            <div class="form-group"><label>Sexo</label><select id="cad-sexo"><option value="M">Masculino</option><option value="F">Feminino</option><option value="Outro">Outro</option></select></div>
-            <div class="form-group"><label>Estado (UF)</label><input type="text" id="cad-uf" value="PE" maxlength="2" required></div>
+            <div class="form-group"><label>Nome Completo *</label><input type="text" id="cad-nome" required></div>
+            <div class="checkout-grid-rua-numero">
+                <div class="form-group"><label>CPF *</label><input type="text" id="cad-cpf" required placeholder="000.000.000-00"></div>
+                <div class="form-group"><label>Sexo</label><select id="cad-sexo"><option value="M">Masculino</option><option value="F">Feminino</option><option value="Outro">Outro</option></select></div>
+            </div>
+            <div class="checkout-grid-rua-numero">
+                <div class="form-group"><label>E-mail *</label><input type="email" id="cad-email" required></div>
+                <div class="form-group"><label>Telefone *</label><input type="text" id="cad-telefone" required placeholder="(81) 99999-9999"></div>
+            </div>
+            <div class="form-group"><label>Palavra-passe *</label><input type="password" id="cad-senha" required placeholder="Crie uma senha"></div>
+
+            <div class="checkout-grid-rua-numero">
+                <div class="form-group"><label>Rua / Logradouro *</label><input type="text" id="cad-rua" required></div>
+                <div class="form-group"><label>Número *</label><input type="text" id="cad-numero" required></div>
+            </div>
+            <div class="checkout-grid-bairro-cidade-uf">
+                <div class="form-group"><label>Bairro *</label><input type="text" id="cad-bairro" required></div>
+                <div class="form-group"><label>Cidade *</label><input type="text" id="cad-cidade" required></div>
+                <div class="form-group"><label>UF *</label><input type="text" id="cad-uf" value="PE" maxlength="2" required></div>
+            </div>
+            <div class="checkout-grid-rua-numero">
+                <div class="form-group"><label>CEP *</label><input type="text" id="cad-cep" value="55150-000" maxlength="9" required></div>
+                <div class="form-group"><label>CPF de quem indicou (Opcional)</label><input type="text" id="cad-cpf-indicador" placeholder="000.000.000-00"></div>
+            </div>
+
             <button type="submit" class="btn-primario">Registrar Conta</button>
             <button type="button" class="btn-cancelar" onclick="fecharModalCadastroCliente()">Cancelar</button>
         </form>
@@ -404,12 +428,35 @@
 </div>
 
 <div id="modal-perfil" class="modal-overlay oculto">
-    <div class="modal-box modal-perfil-box">
-        <h3>Perfil do Cliente</h3>
+    <div class="modal-box modal-perfil-box" style="text-align: left;">
+        <h3 style="text-align: center;">Perfil do Cliente</h3>
         <div id="perfil-detalhes" class="perfil-detalhes-conteudo">
             <!-- Dados do perfil -->
         </div>
-        <button class="btn-cancelar" onclick="fecharModalPerfil()">Fechar</button>
+
+        <hr style="border: 0; border-top: 1px solid var(--cor-borda); margin: 0.8rem 0;">
+
+        <!-- FUNCIONALIDADE: CLIENTE INDICA OUTRO CLIENTE -->
+        <div class="bloco-indicacao-cliente">
+            <h4 style="margin: 0 0 0.4rem 0; color: var(--cor-destaque); font-family: 'Playfair Display', serif;">Indicar um Amigo</h4>
+            <p style="font-size: 0.78rem; color: #666; margin: 0 0 0.6rem 0;">
+                Conhece alguém que já tem conta na Tríade de Papel? Informe o CPF do cliente para registrar a sua indicação:
+            </p>
+            <form id="form-indicar-cliente" onsubmit="registrarIndicacaoCliente(event)" style="display: flex; gap: 0.5rem;">
+                <input type="text" id="input-cpf-indicado" placeholder="CPF do amigo (000.000.000-00)" required
+                       style="flex: 1; padding: 0.45rem; border: 1px solid var(--cor-borda); border-radius: 6px; font-size: 0.8rem;">
+                <button type="submit" class="btn-primario" style="width: auto; padding: 0.45rem 0.9rem;">Indicar</button>
+            </form>
+
+            <div style="margin-top: 0.8rem;">
+                <strong style="font-size: 0.8rem;">Clientes que você já indicou:</strong>
+                <ul id="lista-clientes-indicados" style="font-size: 0.78rem; color: #4a4542; padding-left: 1.2rem; margin: 0.3rem 0;">
+                    <li>A carregar...</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="btn-cancelar" onclick="fecharModalPerfil()" style="margin-top: 0.6rem;">Fechar</button>
     </div>
 </div>
 
@@ -448,9 +495,37 @@
                 <input type="text" id="checkout-final-nome" required placeholder="Digite o nome completo">
             </div>
 
+            <div class="checkout-grid-rua-numero">
+                <div class="form-group">
+                    <label for="checkout-final-rua">Rua / Logradouro *</label>
+                    <input type="text" id="checkout-final-rua" required placeholder="Ex: Rua das Flores">
+                </div>
+                <div class="form-group">
+                    <label for="checkout-final-numero">Número *</label>
+                    <input type="text" id="checkout-final-numero" required placeholder="Ex: 123">
+                </div>
+            </div>
+
+            <div class="checkout-grid-bairro-cidade-uf">
+                <div class="form-group">
+                    <label for="checkout-final-bairro">Bairro *</label>
+                    <input type="text" id="checkout-final-bairro" required placeholder="Ex: Centro">
+                </div>
+
+                <div class="form-group">
+                    <label for="checkout-final-cidade">Cidade *</label>
+                    <input type="text" id="checkout-final-cidade" required placeholder="Ex: Belo Jardim">
+                </div>
+
+                <div class="form-group">
+                    <label for="checkout-final-uf">UF *</label>
+                    <input type="text" id="checkout-final-uf" class="input-uf-maiusculo" required maxlength="2" value="PE" placeholder="PE">
+                </div>
+            </div>
+
             <div class="form-group">
-                <label for="checkout-final-endereco">Endereço de Entrega / Faturação *</label>
-                <input type="text" id="checkout-final-endereco" required placeholder="Rua, Número, Bairro, Cidade - UF">
+                <label for="checkout-final-cep">CEP *</label>
+                <input type="text" id="checkout-final-cep" required maxlength="9" value="55150-000" placeholder="55150-000">
             </div>
 
             <div class="checkout-total-resumo">

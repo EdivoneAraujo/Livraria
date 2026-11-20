@@ -1,8 +1,9 @@
 package com.livraria.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore; // <--- Importação necessária
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "autor")
@@ -10,14 +11,15 @@ public class Autor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_autor")
+    private Long idAutor;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String nome;
 
-    @JsonIgnore // <--- CORREÇÃO: Corta o loop infinito de JSON entre Autor e Livro
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
-    private List<Livro> livros;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "autores")
+    private Set<Livro> livros = new HashSet<>();
 
     public Autor() {}
 
@@ -25,12 +27,12 @@ public class Autor {
         this.nome = nome;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getIdAutor() { return idAutor; }
+    public void setIdAutor(Long idAutor) { this.idAutor = idAutor; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    public List<Livro> getLivros() { return livros; }
-    public void setLivros(List<Livro> livros) { this.livros = livros; }
+    public Set<Livro> getLivros() { return livros; }
+    public void setLivros(Set<Livro> livros) { this.livros = livros; }
 }
