@@ -90,95 +90,95 @@ O projeto foi concebido no contexto acadêmico do **Instituto Federal de Pernamb
 ```
 ---
 ## Modelo Relacional (PostgreSQL)
-pessoa (cpf, nome, email, telefone)
 
-cliente (cpf, sexo, uf)
+- [x] **pessoa** (**cpf**, nome, email, telefone)
+- [x] **cliente** (**_cpf_**, sexo, uf)
+- [x] **usuario** (**_cpf_**, senha, perfil)
+- [x] **vendedor** (**_cpf_**, matricula, data_entrada, tempo_servico, salario)
+- [x] **autor** (**id**, nome)
+- [x] **livro** (**id**, titulo, tematica, preco, quantidade_estoque, estoque_minimo, imagem, _autor_id_)
+- [x] **venda** (**id**, data_venda, total, forma_pagamento, alerta_estoque, _cliente_cpf_, _vendedor_cpf_)
+- [x] **item_venda** (**id**, _venda_id_, _livro_id_, quantidade, preco_unitario)
+- [x] **fatura** (**id**, _venda_id_, numero_fatura, data_emissao)
 
-usuario (cpf, senha, perfil)
-
-vendedor (cpf, matricula, data_entrada, tempo_servico, salario)
-
-autor (id, nome)
-
-livro (id, titulo, tematica, preco, quantidade_estoque, estoque_minimo, imagem, autor_id)
-
-venda (id, data_venda, total, forma_pagamento, alerta_estoque, cliente_cpf, vendedor_cpf)
-
-item_venda (id, venda_id, livro_id, quantidade, preco_unitario)
-
-fatura (id, venda_id, numero_fatura, data_emissao)
-
-(Legenda: Negrito = Chave Primária | Itálico = Chave Estrangeira)
+*(Legenda: **Negrito** = Chave Primária | *Itálico* = Chave Estrangeira)*
 
 ---
 ## 📁 Estrutura de Diretórios
-Plaintext
+
+```text
 LibraryEdis/
 ├── src/
-│   ├── main/
-│   │   ├── java/com/livraria/
-│   │   │   ├── Controller/             # Controladores REST (/api/*)
-│   │   │   ├── DTO/                    # Objetos de Transferência de Dados
-│   │   │   ├── Model/                  # Entidades JPA e Enums
-│   │   │   ├── Repository/             # Repositórios Spring Data JPA
-│   │   │   ├── Service/                # Regras de negócio e transações
-│   │   │   └── LibraryEdisApplication.java
-│   │   └── resources/
-│   │       ├── static/
-│   │       │   ├── img/                # Capa, logotipos e imagens do acervo
-│   │       │   ├── index.html          # Interface principal (Loja, Cliente, Vendedor e Admin)
-│   │       │   ├── style.css           # Folha de estilos responsiva
-│   │       │   └── script.js           # Lógica de consumo da API e gerenciamento de estado
-│   │       └── application.properties  # Configurações de conexão e Hibernate
-└── pom.xml                             # Dependências Maven
-
+│   └── main/
+│       ├── java/com/livraria/
+│       │   ├── Controller/         # Controladores REST (/api/*)
+│       │   ├── DTO/                # Objetos de Transferência de Dados
+│       │   ├── Model/              # Entidades JPA e Enums
+│       │   ├── Repository/         # Repositórios Spring Data JPA
+│       │   ├── Service/            # Regras de negócio e transações
+│       │   └── LibraryEdisApplication.java
+│       └── resources/
+│           ├── static/
+│           │   ├── img/            # Capa, logotipos e imagens do acervo
+│           │   ├── index.html      # Interface principal (Loja, Cliente, Vendedor e Admin)
+│           │   ├── style.css       # Folha de estilos responsiva
+│           │   └── script.js       # Lógica de consumo da API e gerenciamento de estado
+│           └── application.properties # Configurações de conexão e Hibernate
+└── pom.xml                         # Dependências Maven
+```
 ---
 ## ⚙️ Instalação e Execução
-1. Pré-requisitos
-Java Development Kit (JDK) 21
 
-PostgreSQL ativo na porta 5432
+### 1. Pré-requisitos
+* **Java Development Kit (JDK):** Versão 21 ou superior
+* **PostgreSQL:** Ativo na porta padrão `5432`
+* **Apache Maven:** Versão 3.9 ou superior
 
-Maven 3.9+
-
-2. Configuração do Banco de Dados
-Crie o banco de dados no PostgreSQL:
-
-SQL
+### 2. Configuração do Banco de Dados
+Crie o banco de dados no PostgreSQL executando o comando abaixo:
+```sql
 CREATE DATABASE loja;
-3. Variáveis de Ambiente
-Defina as credenciais de acesso ao PostgreSQL no ambiente do sistema ou nas configurações de execução da IDE:
+```
 
-Snippet de código
+### 3. Variáveis de Ambiente
+Defina as credenciais de acesso ao PostgreSQL nas variáveis de ambiente do sistema operacional ou nas configurações de execução da sua IDE (como IntelliJ IDEA ou VS Code):
+```env
 DB_USER=postgres
 DB_PASSWORD=sua_senha
-4. Executar o Projeto
-Bash
-# Clonar o repositório
-git clone [https://github.com/EdivoneAraujo/Livraria.git](https://github.com/EdivoneAraujo/Livraria.git)
+```
 
-# Acessar o diretório
-cd Livraria
+### 4. Executar o Projeto
 
-# Compilar e iniciar a aplicação
-mvn spring-boot:run
-Após a inicialização no console, acesse a aplicação pelo navegador:
+1. **Clonar o repositório:**
+   ```bash
+   git clone [https://github.com/EdivoneAraujo/Livraria.git](https://github.com/EdivoneAraujo/Livraria.git)
+   ```
 
-Plaintext
-http://localhost:8080/index.html
+2. **Acessar o diretório do projeto:**
+   ```bash
+   cd Livraria
+   ```
+
+3. **Compilar e iniciar a aplicação:**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+> **Acesso à aplicação:** Após a inicialização no console, abra o navegador e acesse [`http://localhost:8080/index.html`](http://localhost:8080/index.html).
 
 ---
 ## 👥 Equipe de Desenvolvimento
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/edilka-vanessa-menezes-taurino"><img src="https://img.shields.io/badge/LinkedIn-Edilka%20Taurino-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Edilka Taurino"></a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/nessataurino-design"><img src="https://img.shields.io/badge/GitHub-Edilka%20Taurino-black?style=for-the-badge&logo=github" alt="GitHub Edilka Taurino"></a>
+</p>
+
 <p align="center">
   <a href="https://www.linkedin.com/in/edivone-araujo"><img src="https://img.shields.io/badge/LinkedIn-Edivone%20Araújo-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Edivone Araújo"></a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://github.com/EdivoneAraujo"><img src="https://img.shields.io/badge/GitHub-Edivone%20Araújo-black?style=for-the-badge&logo=github" alt="GitHub Edivone Araújo"></a>
-</p>
-
-<p align="center">
-  <a href="https://www.linkedin.com/in/edilka-vanessa-menezes-taurino"><img src="https://img.shields.io/badge/LinkedIn-Vanessa%20Taurino-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Vanessa Taurino"></a>
-  &nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/nessataurino-design"><img src="https://img.shields.io/badge/GitHub-Vanessa%20Taurino-black?style=for-the-badge&logo=github" alt="GitHub Vanessa Taurino"></a>
 </p>
 
 <p align="center">
