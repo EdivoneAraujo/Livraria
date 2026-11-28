@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS cliente (
     numero VARCHAR(20) NOT NULL,
     bairro VARCHAR(100) NOT NULL,
     cidade VARCHAR(100) NOT NULL,
-    uf CHAR(2) NOT NULL,
+    uf CHAR(2) NOT NULL CHECK (uf ~ '^[A-Z]{2}$'),
     cep VARCHAR(9) NOT NULL,
     id_cliente_indicador BIGINT NULL,
     CONSTRAINT fk_cliente_pessoa
